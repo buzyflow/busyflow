@@ -29,8 +29,10 @@ class User extends Authenticatable implements FilamentUser
         'vendor_whatsapp',
         'bot_name',
         'avatar_color',
+        'welcome_message',
         'custom_instructions',
         'currency',
+        'business_details',
         'is_admin',
     ];
 
@@ -54,6 +56,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'business_details' => 'array',
         ];
     }
 

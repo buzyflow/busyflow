@@ -94,8 +94,14 @@ class AuthController extends Controller
             'vendor_whatsapp' => 'nullable|string',
             'bot_name' => 'sometimes|string',
             'avatar_color' => 'sometimes|string',
+            'welcome_message' => 'nullable|string',
             'custom_instructions' => 'nullable|string',
             'currency' => 'sometimes|string',
+            'business_details' => 'nullable|array',
+            'business_details.opening_hours' => 'nullable|string',
+            'business_details.address' => 'nullable|string',
+            'business_details.contact_info' => 'nullable|string',
+            'business_details.delivery_policy' => 'nullable|string',
         ]);
 
         $user->update($validated);

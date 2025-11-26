@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PricingPlanController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductExtractionController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -23,6 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/user', [AuthController::class, 'user']);
     Route::put('/auth/user', [AuthController::class, 'updateUser']);
+
+    // AI Product Extraction
+    Route::post('/products/extract', [ProductExtractionController::class, 'extract']);
 
     // Products
     Route::apiResource('products', ProductController::class);

@@ -23,7 +23,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'currency' => 'required|string',
             'category' => 'required|string',
-            'image' => 'required|string',
+            'image' => 'nullable|string',
         ]);
 
         $product = $request->user()->products()->create($validated);

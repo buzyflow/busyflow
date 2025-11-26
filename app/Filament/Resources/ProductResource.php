@@ -43,7 +43,7 @@ class ProductResource extends Resource
                     ->required(),
                 Forms\Components\FileUpload::make('image')
                     ->image()
-                    ->required(),
+                    ->nullable(),
             ]);
     }
 
