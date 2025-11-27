@@ -16,14 +16,13 @@ class GetProductsTool extends Tool
 
     public function __invoke()
     {
-        // Get vendor_id from request (set by ChatController based on user_id)
-        // We'll add vendor_id to the request in ChatController
-        $vendorId = request()->input('_vendor_id');
-        if (! $vendorId) {
-            return json_encode(['error' => 'No vendor context available']);
+        // Get business_id from request (set by ChatController)
+        $businessId = request()->input('_business_id');
+        if (! $businessId) {
+            return json_encode(['error' => 'No business context available']);
         }
 
-        $products = Product::where('user_id', $vendorId)->get();
+        $products = Product::where('business_id', $businessId)->get();
 
         // Return JSON string of products with relevant fields
         return $products->map(function ($p) {

@@ -111,7 +111,7 @@ export default function Dashboard({ business, bot, analytics, user }: DashboardP
                     </div>
 
                     {/* Total Products */}
-                    <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 hover:shadow-xl transition-shadow">
+                    <Link href="/products" className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 hover:shadow-xl transition-shadow cursor-pointer block">
                         <div className="flex items-center justify-between mb-3">
                             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
                                 <Package size={20} className="text-white" />
@@ -119,7 +119,7 @@ export default function Dashboard({ business, bot, analytics, user }: DashboardP
                         </div>
                         <h3 className="text-2xl sm:text-3xl font-bold text-slate-900">{analytics.total_products}</h3>
                         <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">Products</p>
-                    </div>
+                    </Link>
 
                     {/* Total Revenue */}
                     <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-6 hover:shadow-xl transition-shadow">
@@ -133,8 +133,8 @@ export default function Dashboard({ business, bot, analytics, user }: DashboardP
                     </div>
                 </div>
 
-                {/* Quick Action - Add Product */}
-                <div className="mb-4 md:mb-6">
+                {/* Quick Actions */}
+                <div className="mb-4 md:mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link
                         href="/products/create"
                         className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg"
@@ -142,6 +142,24 @@ export default function Dashboard({ business, bot, analytics, user }: DashboardP
                         <Plus size={20} />
                         <span>Add New Product</span>
                     </Link>
+                    <Link
+                        href="/products"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all shadow-sm"
+                    >
+                        <Package size={20} />
+                        <span>View Inventory</span>
+                    </Link>
+                    {bot && bot.active && (
+                        <a
+                            href={`/chat?business_id=${business.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg"
+                        >
+                            <Bot size={20} />
+                            <span>Test Chat Bot</span>
+                        </a>
+                    )}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">

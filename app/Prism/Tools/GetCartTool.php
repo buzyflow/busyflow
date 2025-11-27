@@ -19,7 +19,7 @@ class GetCartTool extends Tool
         // Get customer_id from request (set by ChatController)
         $customerId = request()->input('_customer_id');
         if (! $customerId) {
-            return json_encode(['items' => [], 'total' => 0, 'currency' => 'USD', 'message' => 'No customer session']);
+            return json_encode(['items' => [], 'total' => 0, 'currency' => 'NGN', 'message' => 'No customer session']);
         }
 
         $cart = Cart::where('customer_id', $customerId)->first();

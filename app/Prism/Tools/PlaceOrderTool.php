@@ -29,33 +29,45 @@ class PlaceOrderTool extends Tool
             return 'Error: Cart is empty. Please add items before placing an order.';
         }
 
-        // Get vendor_id from request
-        $vendorId = request()->input('_vendor_id');
+        // Get business_id from request
+        $businessId = request()->input('_business_id');
 
-        // Wrap in transaction
-        return DB::transaction(function () use ($customerId, $cart, $vendorId) {
-            $order = Order::create([
-                'customer_id' => $customerId,
-                'vendor_id' => $vendorId,
-                'status' => 'pending',
-            ]);
-            $total = 0;
-            $currency = 'NGN';
-            foreach ($cart->items as $cartItem) {
-                $order->items()->create([
-                    'product_id' => $cartItem->product_id,
-                    'quantity' => $cartItem->quantity,
-                    'price' => $cartItem->price,
-                    'currency' => $cartItem->currency,
-                ]);
-                $total += $cartItem->price * $cartItem->quantity;
-                $currency = $cartItem->currency;
-            }
-            $order->update(['total' => $total, 'currency' => $currency]);
-            // Clear cart
-            $cart->items()->delete();
+        // Get customer for order details
+        $customer = \App\Models\Customer::find($customerId);
 
-            return "Order placed successfully! Order ID: #{$order->id}. Total: {$currency} {$total}. We'll process it shortly.";
-        });
+        // Build items array and calculate total
+        $orderItems = [];
+        $total = 0;
+        $currency = 'NGN';
+
+        foreach ($cart->items()->with('product')->get() as $cartItem) {
+            $orderItems[] = [
+                'product_id' => $cartItem->product_id,
+                'product_name' => $cartItem->product->name,
+                'quantity' => $cartItem->quantity,
+                'price' => $cartItem->price,
+                'currency' => $cartItem->currency,
+            ];
+            $total += $cartItem->price * $cartItem->quantity;
+            $currency = $cartItem->currency;
+        }
+
+        // Create order with items as JSON
+        $order = Order::create([
+            'customer_id' => $customerId,
+            'business_id' => $businessId,
+            'customer_name' => $customer->name,
+            'customer_phone' => $customer->phone,
+            'items' => $orderItems,
+            'total' => $total,
+            'currency' => $currency,
+            'status' => 'pending',
+            'order_timestamp' => now()->timestamp,
+        ]);
+
+        // Clear cart
+        $cart->items()->delete();
+
+        return "Order placed successfully! Order ID: #{$order->id}. Total: {$currency} {$total}. We'll process it shortly.";
     }
 }

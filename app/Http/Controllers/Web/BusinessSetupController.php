@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Business;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class BusinessSetupController extends Controller
@@ -23,7 +24,7 @@ class BusinessSetupController extends Controller
         ]);
 
         $business = Business::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'name' => $request->name,
             'phone' => $request->phone,
             'industry' => $request->industry,

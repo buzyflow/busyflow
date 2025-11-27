@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/auth/user', [AuthController::class, 'updateUser']);
 
     // AI Product Extraction
-    Route::post('/products/extract', [ProductExtractionController::class, 'extract']);
+    // Route::post('/products/extract', [ProductExtractionController::class, 'extract']);
 
     // Products
     Route::apiResource('products', ProductController::class);

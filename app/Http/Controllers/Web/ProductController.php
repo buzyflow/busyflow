@@ -72,6 +72,48 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product created successfully!');
     }
 
+    public function bulkStore(Request $request)
+    {
+        $businessId = session('active_business_id');
+        
+        if (!$businessId) {
+            return response()->json(['message' => 'No active business'], 401);
+        }
+        
+        $business = auth()->user()->businesses()->findOrFail($businessId);
+        
+        $validated = $request->validate([
+            'products' => 'required|array|min:1',
+            'products.*.name' => 'required|string|max:255',
+            'products.*.description' => 'nullable|string',
+            'products.*.price' => 'required|numeric|min:0',
+            'products.*.quantity' => 'nullable|integer|min:0',
+            'products.*.category' => 'nullable|string|max:100',
+        ]);
+        
+        $createdCount = 0;
+        
+        foreach ($validated['products'] as $productData) {
+            Product::create([
+                'business_id' => $businessId,
+                'name' => $productData['name'],
+                'description' => $productData['description'] ?? null,
+                'price' => $productData['price'],
+                'quantity' => $productData['quantity'] ?? 0,
+                'currency' => $business->currency,
+                'category' => $productData['category'] ?? 'Other',
+                'image' => null, // Bulk create doesn't support image upload yet
+            ]);
+            $createdCount++;
+        }
+        
+        return response()->json([
+            'success' => true,
+            'message' => "Successfully created {$createdCount} products",
+            'count' => $createdCount
+        ]);
+    }
+
     public function edit(Product $product)
     {
         // Ensure product belongs to active business

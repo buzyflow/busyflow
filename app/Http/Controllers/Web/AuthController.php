@@ -14,7 +14,9 @@ class AuthController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'appName' => config('app.name'),
+        ]);
     }
 
     public function store(Request $request)
@@ -38,7 +40,9 @@ class AuthController extends Controller
 
     public function showLogin()
     {
-        return Inertia::render('Auth/Login');
+        return Inertia::render('Auth/Login', [
+            'appName' => config('app.name'),
+        ]);
     }
 
     public function login(Request $request)
@@ -51,14 +55,17 @@ class AuthController extends Controller
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
 
+            /** @var User $user */
+            $user = Auth::user();
+
             // Check if user has at least one business
-            if (auth()->user()->businesses()->count() === 0) {
+            if ($user->businesses()->count() === 0) {
                 return redirect('/setup-business');
             }
 
             // Set the first business as active if not already set
             if (!session()->has('active_business_id')) {
-                $firstBusiness = auth()->user()->businesses()->first();
+                $firstBusiness = $user->businesses()->first();
                 session(['active_business_id' => $firstBusiness->id]);
             }
 

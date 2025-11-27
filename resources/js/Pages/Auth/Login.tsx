@@ -2,7 +2,11 @@ import React, { FormEventHandler } from 'react';
 import { useForm, Head, Link } from '@inertiajs/react';
 import { Store, ArrowRight, CheckCircle2 } from 'lucide-react';
 
-export default function Login() {
+interface Props {
+    appName: string;
+}
+
+export default function Login({ appName }: Props) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -29,7 +33,7 @@ export default function Login() {
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-6">
                             <Store size={24} className="text-white" />
                         </div>
-                        <h1 className="text-3xl font-bold mb-4">BizyFlow</h1>
+                        <h1 className="text-3xl font-bold mb-4">{appName}</h1>
                         <p className="text-indigo-100 text-lg leading-relaxed">
                             Empower your WhatsApp business with an intelligent AI assistant that handles customer inquiries and orders 24/7.
                         </p>

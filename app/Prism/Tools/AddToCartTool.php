@@ -13,23 +13,27 @@ class AddToCartTool extends Tool
         $this->as('addToCart')
             ->for('Add a specific item to the customer\'s shopping cart.')
             ->withStringParameter('itemName', 'The name of the product to add.')
-            ->withNumberParameter('quantity', 'The quantity to add (default 1).')
+            ->withNumberParameter('quantity', 'The quantity to add. Defaults to 1 if not specified.')
             ->using($this);
     }
 
-    public function __invoke(string $itemName, int $quantity = 1)
+
+    public function __invoke(string $itemName, ?int $quantity = null)
     {
+        // Default quantity to 1 if not provided
+        $quantity = $quantity ?? 1;
+        
         // Get customer_id from request (set by ChatController)
         $customerId = request()->input('_customer_id');
         if (! $customerId) {
             return 'Error: No customer session. Please authenticate first.';
         }
 
-        // Get vendor_id from request
-        $vendorId = request()->input('_vendor_id');
+        // Get business_id from request
+        $businessId = request()->input('_business_id');
         
-        // Find product by name within this vendor's catalog
-        $product = Product::where('user_id', $vendorId)
+        // Find product by name within this business's catalog
+        $product = Product::where('business_id', $businessId)
             ->where('name', 'LIKE', "%{$itemName}%")
             ->first();
             

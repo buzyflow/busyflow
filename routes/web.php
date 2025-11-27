@@ -1,17 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test-inertia', function () {
-    return Inertia::render('Test', [
-        'message' => 'Hello from Laravel!',
-    ]);
-});
+// Public chat routes (no auth required for customers)
+Route::get('/chat', [\App\Http\Controllers\Web\ChatController::class, 'index'])->name('chat.index');
+Route::post('/chat/start', [\App\Http\Controllers\Web\ChatController::class, 'start'])->name('chat.start');
+Route::post('/chat/send', [\App\Http\Controllers\Web\ChatController::class, 'send'])->name('chat.send');
+
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [\App\Http\Controllers\Web\AuthController::class, 'create'])->name('register');
@@ -27,7 +26,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/setup-business', [\App\Http\Controllers\Web\BusinessSetupController::class, 'create'])->name('setup-business');
     Route::post('/setup-business', [\App\Http\Controllers\Web\BusinessSetupController::class, 'store']);
     
-    Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
-    
-    Route::resource('products', \App\Http\Controllers\Web\ProductController::class);
+    Route::middleware('business')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
+        
+        Route::post('/products/bulk', [\App\Http\Controllers\Web\ProductController::class, 'bulkStore'])->name('products.bulk');
+        Route::resource('products', \App\Http\Controllers\Web\ProductController::class);
+
+        // AI Product Extraction
+        Route::post('/products/extract', [\App\Http\Controllers\Api\ProductExtractionController::class, 'extract'])->name('products.extract');
+    });
 });

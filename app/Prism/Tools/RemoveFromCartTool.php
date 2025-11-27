@@ -24,11 +24,11 @@ class RemoveFromCartTool extends Tool
             return 'Error: No customer session. Please authenticate first.';
         }
 
-        // Get vendor_id from request
-        $vendorId = request()->input('_vendor_id');
+        // Get business_id from request
+        $businessId = request()->input('_business_id');
 
-        // Find product by name (fuzzy match) within vendor's catalog
-        $product = Product::where('user_id', $vendorId)
+        // Find product by name (fuzzy match) within business's catalog
+        $product = Product::where('business_id', $businessId)
             ->where('name', 'LIKE', "%{$itemName}%")
             ->first();
             

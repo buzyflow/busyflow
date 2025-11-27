@@ -17,6 +17,7 @@ class Order extends Model
         'customer_phone',
         'items',
         'total',
+        'currency',
         'status',
         'order_timestamp',
     ];
