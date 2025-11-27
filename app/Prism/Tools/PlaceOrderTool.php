@@ -29,14 +29,18 @@ class PlaceOrderTool extends Tool
             return 'Error: Cart is empty. Please add items before placing an order.';
         }
 
+        // Get vendor_id from request
+        $vendorId = request()->input('_vendor_id');
+
         // Wrap in transaction
-        return DB::transaction(function () use ($customerId, $cart) {
+        return DB::transaction(function () use ($customerId, $cart, $vendorId) {
             $order = Order::create([
                 'customer_id' => $customerId,
+                'vendor_id' => $vendorId,
                 'status' => 'pending',
             ]);
             $total = 0;
-            $currency = 'USD';
+            $currency = 'NGN';
             foreach ($cart->items as $cartItem) {
                 $order->items()->create([
                     'product_id' => $cartItem->product_id,

@@ -24,8 +24,14 @@ class RemoveFromCartTool extends Tool
             return 'Error: No customer session. Please authenticate first.';
         }
 
-        // Find product by name (fuzzy match)
-        $product = Product::where('name', 'LIKE', "%{$itemName}%")->first();
+        // Get vendor_id from request
+        $vendorId = request()->input('_vendor_id');
+
+        // Find product by name (fuzzy match) within vendor's catalog
+        $product = Product::where('user_id', $vendorId)
+            ->where('name', 'LIKE', "%{$itemName}%")
+            ->first();
+            
         if (! $product) {
             return "Error: Product '{$itemName}' not found in catalog.";
         }

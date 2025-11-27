@@ -9,22 +9,12 @@ use App\Prism\Tools\GetProductsTool;
 use App\Prism\Tools\PlaceOrderTool;
 use App\Prism\Tools\RemoveFromCartTool;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 
 class ChatController extends Controller
 {
-    public function __construct()
-    {
-        // Register tools once per request
-        // GetProductsTool::register();
-        // AddToCartTool::register();
-        // RemoveFromCartTool::register();
-        // GetCartTool::register();
-        // PlaceOrderTool::register();
-    }
-
     public function chat(Request $request)
     {
         $validated = $request->validate([
@@ -35,7 +25,7 @@ class ChatController extends Controller
 
         // Get business owner (for bot settings)
         // If authenticated, use that user; otherwise use provided user_id
-        $user = auth()->user() ?? \App\Models\User::find($validated['user_id']);
+        $user = Auth::user() ?? \App\Models\User::find($validated['user_id']);
 
         if (! $user) {
             return response()->json(['error' => 'User not found'], 404);
@@ -86,7 +76,7 @@ class ChatController extends Controller
         if ($customerId) {
             $customer = \App\Models\Customer::find($customerId);
             if ($customer) {
-                $customerContext = "\n\nCURRENT CUSTOMER:\nYou are currently chatting with {$customer->name}. Address them by their name to make the conversation more personal and friendly.\nPhone: {$customer->phone_number}";
+                $customerContext = "\n\nCURRENT CUSTOMER:\nYou are currently chatting with {$customer->name}. Address them by their name to make the conversation more personal and friendly.";
             }
         }
 

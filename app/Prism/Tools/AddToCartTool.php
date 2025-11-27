@@ -25,8 +25,14 @@ class AddToCartTool extends Tool
             return 'Error: No customer session. Please authenticate first.';
         }
 
-        // Find product by name
-        $product = Product::where('name', 'LIKE', "%{$itemName}%")->first();
+        // Get vendor_id from request
+        $vendorId = request()->input('_vendor_id');
+        
+        // Find product by name within this vendor's catalog
+        $product = Product::where('user_id', $vendorId)
+            ->where('name', 'LIKE', "%{$itemName}%")
+            ->first();
+            
         if (! $product) {
             return "Error: Product '{$itemName}' not found in catalog.";
         }

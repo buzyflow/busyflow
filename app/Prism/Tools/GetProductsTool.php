@@ -23,7 +23,7 @@ class GetProductsTool extends Tool
             return json_encode(['error' => 'No vendor context available']);
         }
 
-        $products = Product::where('vendor_id', $vendorId)->get();
+        $products = Product::where('user_id', $vendorId)->get();
 
         // Return JSON string of products with relevant fields
         return $products->map(function ($p) {
