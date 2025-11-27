@@ -12,10 +12,11 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'business_id',
         'name',
         'description',
         'price',
+        'quantity',
         'currency',
         'category',
         'image',
@@ -55,6 +56,14 @@ class Product extends Model
         return "https://picsum.photos/seed/{$seed}/400/300";
     }
 
+    public function business(): BelongsTo
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+    /**
+     * @deprecated Use business() instead
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

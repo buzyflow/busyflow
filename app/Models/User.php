@@ -25,14 +25,6 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'business_name',
-        'vendor_whatsapp',
-        'bot_name',
-        'avatar_color',
-        'welcome_message',
-        'custom_instructions',
-        'currency',
-        'business_details',
         'is_admin',
     ];
 
@@ -56,12 +48,20 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'business_details' => 'array',
         ];
     }
 
     /**
-     * Get the products for the user.
+     * Get the businesses for the user.
+     */
+    public function businesses(): HasMany
+    {
+        return $this->hasMany(Business::class);
+    }
+
+    /**
+     * Get the products for the user (via businesses).
+     * @deprecated Use businesses()->with('products') instead
      */
     public function products(): HasMany
     {

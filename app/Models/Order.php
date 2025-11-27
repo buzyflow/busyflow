@@ -11,7 +11,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'vendor_id',
+        'business_id',
         'customer_id',
         'customer_name',
         'customer_phone',
@@ -27,6 +27,14 @@ class Order extends Model
         'order_timestamp' => 'integer',
     ];
 
+    public function business(): BelongsTo
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+    /**
+     * @deprecated Use business() instead
+     */
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'vendor_id');

@@ -12,7 +12,7 @@ class Customer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'vendor_id',
+        'business_id',
         'phone',
         'name',
         'last_active',
@@ -22,6 +22,14 @@ class Customer extends Model
         'last_active' => 'datetime',
     ];
 
+    public function business(): BelongsTo
+    {
+        return $this->belongsTo(Business::class);
+    }
+
+    /**
+     * @deprecated Use business() instead
+     */
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'vendor_id');
