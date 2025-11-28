@@ -16,7 +16,7 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'quantity',
+        'stock',
         'currency',
         'category',
         'image',
@@ -35,7 +35,7 @@ class Product extends Model
     protected function image(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value ?? $this->getDefaultImage()
+            get: fn($value) => $value ?? $this->getDefaultImage()
         );
     }
 
@@ -50,9 +50,9 @@ class Product extends Model
             'Food' => 'food',
             'Other' => 'product',
         ];
-        
+
         $seed = $categorySeeds[$this->category] ?? 'product';
-        
+
         return "https://picsum.photos/seed/{$seed}/400/300";
     }
 

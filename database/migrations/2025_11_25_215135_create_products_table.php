@@ -13,14 +13,24 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            // Multi-tenant: which business owns this product
+            $table->foreignId('business_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->string('name');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
-            $table->string('currency')->default('NGN');
-            $table->string('category');
-            $table->string('image');
+            $table->integer('stock')->default(0); // renamed for clarity
+            $table->string('currency', 3)->default('NGN');
+            $table->string('category')->nullable();
+            $table->string('image')->nullable();
+
             $table->timestamps();
+
+            // Optional: enforce unique product name per business
+            $table->unique(['business_id', 'name']);
         });
     }
 

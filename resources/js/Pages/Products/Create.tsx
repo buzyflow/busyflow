@@ -1,14 +1,19 @@
 import React, { FormEventHandler, useState } from 'react';
 import { useForm, Head, router } from '@inertiajs/react';
 import { Package, ArrowLeft, Upload, X, Sparkles, Wand2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import businessProduct, { index, store } from '../../routes/business/products';
 
-export default function Create() {
+type Props = {
+    business: Business;
+}
+
+export default function Create({ business }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         description: '',
         price: '',
-        quantity: '',
+        stock: '',
         category: 'Other',
         image: null as File | null,
     });
@@ -44,7 +49,7 @@ export default function Create() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post('/products');
+        post(store.url(business));
     };
 
     const fillFormWithProduct = (product: any) => {
@@ -65,7 +70,7 @@ export default function Create() {
         setExtractedProducts([]);
 
         try {
-            const response = await axios.post('/products/extract', {
+            const response = await axios.post(businessProduct.extract(business).url, {
                 text: pasteContent
             });
 
@@ -123,7 +128,7 @@ export default function Create() {
                 axios.defaults.headers.common['X-XSRF-TOKEN'] = decodeURIComponent(csrfToken);
             }
 
-            const response = await axios.post('/products/bulk', {
+            const response = await axios.post(businessProduct.bulk(business).url, {
                 products: productsToCreate.map(p => ({
                     name: p.name,
                     description: p.description,
@@ -140,14 +145,18 @@ export default function Create() {
                 setExtractedProducts([]);
 
                 // Redirect to index page to show new products
-                router.visit('/products');
+                router.visit(index.url(business));
             } else {
                 throw new Error(response.data.message || 'Failed to create products');
             }
 
         } catch (error) {
             console.error('Bulk create error:', error);
-            setAnalyzeError('Failed to create products. Please try again.');
+            if (error instanceof AxiosError) {
+                setAnalyzeError(Object.values(error.response?.data.errors).join('<br>') || 'Failed to create products');
+            } else {
+                setAnalyzeError('Failed to create products');
+            }
         } finally {
             setIsCreating(false);
             setCreationProgress('');
@@ -171,7 +180,7 @@ export default function Create() {
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={() => router.visit('/products')}
+                            onClick={() => router.visit(index.url(business))}
                             className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all"
                         >
                             <ArrowLeft size={20} className="text-slate-600" />
@@ -263,12 +272,12 @@ export default function Create() {
                                     id="quantity"
                                     type="number"
                                     min="0"
-                                    value={data.quantity}
-                                    onChange={(e) => setData('quantity', e.target.value)}
+                                    value={data.stock}
+                                    onChange={(e) => setData('stock', e.target.value)}
                                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
                                     placeholder="0"
                                 />
-                                {errors.quantity && <div className="text-red-600 text-sm mt-1">{errors.quantity}</div>}
+                                {errors.stock && <div className="text-red-600 text-sm mt-1">{errors.stock}</div>}
                             </div>
                         </div>
 
@@ -277,18 +286,14 @@ export default function Create() {
                             <label htmlFor="category" className="block text-sm font-semibold text-slate-700 mb-2">
                                 Category
                             </label>
-                            <select
+                            <input
                                 id="category"
+                                type="text"
                                 value={data.category}
                                 onChange={(e) => setData('category', e.target.value)}
                                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                            >
-                                {categories.map((category) => (
-                                    <option key={category} value={category}>
-                                        {category}
-                                    </option>
-                                ))}
-                            </select>
+                                placeholder="Category"
+                            />
                             {errors.category && <div className="text-red-600 text-sm mt-1">{errors.category}</div>}
                         </div>
 
@@ -453,9 +458,9 @@ export default function Create() {
                             )}
 
                             {analyzeError && (
-                                <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 flex items-center gap-2">
+                                <div className="flex items-center gap-2 text-red-500 text-sm">
                                     <AlertCircle size={14} />
-                                    {analyzeError}
+                                    <span dangerouslySetInnerHTML={{ __html: analyzeError }} />
                                 </div>
                             )}
                         </div>

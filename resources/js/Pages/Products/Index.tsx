@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { Plus, Package, Search, MoreVertical, Pencil, Trash2, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { create, destroy, edit } from '../../routes/business/products';
+import { dashboard } from '../../routes/business';
 
-interface Product {
-    id: number;
-    name: string;
-    description: string;
-    price: string;
-    currency: string;
-    category: string;
-    quantity: number;
-    image: string | null;
-}
+
 
 interface Props {
     products: Product[];
+    business: string;
 }
 
-export default function Index({ products }: Props) {
+export default function Index({ products, business }: Props) {
+    console.log(products);
+
     const [deleteId, setDeleteId] = useState<number | null>(null);
 
     const handleDelete = (id: number) => {
@@ -26,7 +22,7 @@ export default function Index({ products }: Props) {
 
     const confirmDelete = () => {
         if (deleteId) {
-            router.delete(`/products/${deleteId}`, {
+            router.delete(destroy.url({ business, product: deleteId }), {
                 onFinish: () => setDeleteId(null),
             });
         }
@@ -41,7 +37,7 @@ export default function Index({ products }: Props) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                     <div className="flex items-center gap-3">
                         <Link
-                            href="/dashboard"
+                            href={dashboard.url(business)}
                             className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all shadow-sm"
                         >
                             <ArrowLeft size={20} className="text-slate-600" />
@@ -55,7 +51,7 @@ export default function Index({ products }: Props) {
                     </div>
 
                     <Link
-                        href="/products/create"
+                        href={create.url({ business })}
                         className="flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg"
                     >
                         <Plus size={20} />
@@ -106,17 +102,17 @@ export default function Index({ products }: Props) {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center gap-1.5 ${product.quantity > 0 ? 'text-emerald-600' : 'text-red-600'
+                                                <span className={`inline-flex items-center gap-1.5 ${product.stock > 0 ? 'text-emerald-600' : 'text-red-600'
                                                     }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${product.quantity > 0 ? 'bg-emerald-500' : 'bg-red-500'
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${product.stock > 0 ? 'bg-emerald-500' : 'bg-red-500'
                                                         }`} />
-                                                    {product.quantity} in stock
+                                                    {product.stock} in stock
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link
-                                                        href={`/products/${product.id}/edit`}
+                                                        href={edit({ business, product })}
                                                         className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                                                     >
                                                         <Pencil size={18} />

@@ -13,13 +13,20 @@ return new class extends Migration
     {
         Schema::create('bots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('business_id')->unique()->constrained()->onDelete('cascade');
+
+            // One bot per business
+            $table->foreignId('business_id')
+                ->unique()
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('avatar')->nullable();
-            $table->text('persona')->nullable();
-            $table->string('tone')->nullable();
+            $table->json('persona')->nullable(); // store persona as structured JSON
+            $table->enum('tone', ['friendly', 'formal', 'casual', 'humorous'])->nullable();
             $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
     }

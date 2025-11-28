@@ -2,12 +2,13 @@
 
 namespace App\Prism\Tools;
 
-use App\Models\Cart;
+use App\Models\Business;
+use App\Models\Customer;
 use Prism\Prism\Tool;
 
 class GetCartTool extends Tool
 {
-    public function __construct()
+    public function __construct(public Business $business, public Customer $customer)
     {
         $this->as('getCart')
             ->for('Get the current status of the cart, including items and total price.')
@@ -16,27 +17,49 @@ class GetCartTool extends Tool
 
     public function __invoke()
     {
-        // Get customer_id from request (set by ChatController)
-        $customerId = request()->input('_customer_id');
-        if (! $customerId) {
-            return json_encode(['items' => [], 'total' => 0, 'currency' => 'NGN', 'message' => 'No customer session']);
-        }
+        // Correct: fetch cart for THIS business only
+        $cart = $this->customer
+            ->carts()
+            ->where('business_id', $this->business->id)
+            ->first();
 
-        $cart = Cart::where('customer_id', $customerId)->first();
         if (! $cart || $cart->items()->count() === 0) {
-            return json_encode(['items' => [], 'total' => 0, 'currency' => 'USD', 'message' => 'Cart is empty']);
+            return json_encode([
+                'status' => 'empty',
+                'items' => [],
+                'total' => 0,
+                'currency' => 'NGN',
+                'message' => 'Cart is empty'
+            ]);
         }
 
-        $items = $cart->items()->with('product')->get()->map(function ($item) {
-            return [
-                'product' => $item->product->name,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
-                'currency' => $item->currency,
-            ];
-        })->toArray();
-        $total = array_reduce($items, fn ($carry, $i) => $carry + ($i['price'] * $i['quantity']), 0);
+        // Load items with product data
+        $items = $cart->items()
+            ->with('product')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'product' => [
+                        'id' => $item->product->id,
+                        'name' => $item->product->name,
+                        'price' => $item->product->price,
+                        'currency' => $item->product->currency,
+                        'image' => $item->product->image,
+                    ],
+                    'quantity' => $item->quantity,
+                    'price' => $item->price,
+                    'line_total' => $item->price * $item->quantity,
+                ];
+            })->toArray();
 
-        return json_encode(['items' => $items, 'total' => $total, 'currency' => $items[0]['currency'] ?? 'USD']);
+        $total = array_reduce($items, fn($carry, $i) => $carry + $i['line_total'], 0);
+        $currency = $items[0]['product']['currency'] ?? 'NGN';
+
+        return json_encode([
+            'status' => 'success',
+            'items' => $items,
+            'total' => $total,
+            'currency' => $currency
+        ]);
     }
 }

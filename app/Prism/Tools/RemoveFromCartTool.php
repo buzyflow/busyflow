@@ -2,52 +2,65 @@
 
 namespace App\Prism\Tools;
 
-use App\Models\Cart;
-use App\Models\Product;
+use App\Models\Business;
+use App\Models\Customer;
 use Prism\Prism\Tool;
 
 class RemoveFromCartTool extends Tool
 {
-    public function __construct()
+    public function __construct(protected Business $business, protected Customer $customer)
     {
         $this->as('removeFromCart')
             ->for('Remove an item from the customer\'s shopping cart.')
-            ->withStringParameter('itemName', 'The name of the product to remove.')
+            ->withStringParameter('id', 'The id of the product to remove.')
             ->using($this);
     }
 
-    public function __invoke(string $itemName)
+    public function __invoke(string $id)
     {
-        // Get customer_id from request (set by ChatController)
-        $customerId = request()->input('_customer_id');
-        if (! $customerId) {
-            return 'Error: No customer session. Please authenticate first.';
-        }
+        $productId = (int) $id;
 
-        // Get business_id from request
-        $businessId = request()->input('_business_id');
-
-        // Find product by name (fuzzy match) within business's catalog
-        $product = Product::where('business_id', $businessId)
-            ->where('name', 'LIKE', "%{$itemName}%")
-            ->first();
-            
+        // Verify product belongs to this business
+        $product = $this->business->products()->where('id', $productId)->first();
         if (! $product) {
-            return "Error: Product '{$itemName}' not found in catalog.";
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Product not found in this business catalog.'
+            ]);
         }
 
-        $cart = Cart::where('customer_id', $customerId)->first();
+        // Fetch the cart for this business
+        $cart = $this->customer
+            ->carts()
+            ->where('business_id', $this->business->id)
+            ->first();
+
         if (! $cart) {
-            return 'Error: Cart is empty.';
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Cart is empty.'
+            ]);
         }
 
+        // Check if product is in cart
         $cartItem = $cart->items()->where('product_id', $product->id)->first();
         if (! $cartItem) {
-            return "Error: '{$product->name}' is not in your cart.";
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Product is not in your cart.'
+            ]);
         }
 
+        // Remove from cart
         $cartItem->delete();
 
-        return "Removed '{$product->name}' from cart.";
+        return json_encode([
+            'status' => 'success',
+            'message' => "Removed '{$product->name}' from cart.",
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name
+            ]
+        ]);
     }
 }

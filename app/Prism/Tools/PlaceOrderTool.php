@@ -2,14 +2,14 @@
 
 namespace App\Prism\Tools;
 
-use App\Models\Cart;
+use App\Models\Business;
+use App\Models\Customer;
 use App\Models\Order;
-use Illuminate\Support\Facades\DB;
 use Prism\Prism\Tool;
 
 class PlaceOrderTool extends Tool
 {
-    public function __construct()
+    public function __construct(public Business $business, public Customer $customer)
     {
         $this->as('placeOrder')
             ->for('Finalize and place the order for the customer.')
@@ -18,56 +18,63 @@ class PlaceOrderTool extends Tool
 
     public function __invoke()
     {
-        // Get customer_id from request (set by ChatController)
-        $customerId = request()->input('_customer_id');
-        if (! $customerId) {
-            return 'Error: No customer session. Please authenticate first.';
-        }
+        // Pull the correct cart for this business
+        $cart = $this->customer
+            ->carts()
+            ->where('business_id', $this->business->id)
+            ->first();
 
-        $cart = Cart::where('customer_id', $customerId)->first();
         if (! $cart || $cart->items()->count() === 0) {
-            return 'Error: Cart is empty. Please add items before placing an order.';
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Cart is empty. Please add items before placing an order.'
+            ]);
         }
 
-        // Get business_id from request
-        $businessId = request()->input('_business_id');
-
-        // Get customer for order details
-        $customer = \App\Models\Customer::find($customerId);
-
-        // Build items array and calculate total
+        $customer = $this->customer;
         $orderItems = [];
         $total = 0;
         $currency = 'NGN';
 
-        foreach ($cart->items()->with('product')->get() as $cartItem) {
+        // Build item list
+        $items = $cart->items()->with('product')->get();
+
+        foreach ($items as $cartItem) {
             $orderItems[] = [
-                'product_id' => $cartItem->product_id,
+                'product_id'   => $cartItem->product_id,
                 'product_name' => $cartItem->product->name,
-                'quantity' => $cartItem->quantity,
-                'price' => $cartItem->price,
-                'currency' => $cartItem->currency,
+                'quantity'     => $cartItem->quantity,
+                'price'        => $cartItem->price,
+                'currency'     => $cartItem->currency,
+                'line_total'   => $cartItem->price * $cartItem->quantity,
             ];
+
             $total += $cartItem->price * $cartItem->quantity;
             $currency = $cartItem->currency;
         }
 
-        // Create order with items as JSON
+        // Create order record
         $order = Order::create([
-            'customer_id' => $customerId,
-            'business_id' => $businessId,
-            'customer_name' => $customer->name,
+            'customer_id'    => $customer->id,
+            'business_id'    => $this->business->id,
+            'customer_name'  => $customer->name,
             'customer_phone' => $customer->phone,
-            'items' => $orderItems,
-            'total' => $total,
-            'currency' => $currency,
-            'status' => 'pending',
+            'items'          => $orderItems,
+            'total'          => $total,
+            'currency'       => $currency,
+            'status'         => 'pending',
             'order_timestamp' => now()->timestamp,
         ]);
 
-        // Clear cart
+        // Clear cart after order
         $cart->items()->delete();
 
-        return "Order placed successfully! Order ID: #{$order->id}. Total: {$currency} {$total}. We'll process it shortly.";
+        return json_encode([
+            'status' => 'success',
+            'message' => 'Order placed successfully!',
+            'order_id' => $order->id,
+            'total' => $total,
+            'currency' => $currency
+        ]);
     }
 }

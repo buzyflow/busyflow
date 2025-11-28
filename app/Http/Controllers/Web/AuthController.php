@@ -69,7 +69,7 @@ class AuthController extends Controller
                 session(['active_business_id' => $firstBusiness->id]);
             }
 
-            return redirect()->intended('/dashboard');
+            return redirect()->intended(route('business.dashboard', $user->businesses()->first()));
         }
 
         return back()->withErrors([

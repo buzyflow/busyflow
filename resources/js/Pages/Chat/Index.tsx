@@ -1,22 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head } from '@inertiajs/react';
-import { Send, Bot as BotIcon, User, Loader2 } from 'lucide-react';
+import { Send, Bot as BotIcon, User, Loader2, ShoppingBag, X, Trash2 } from 'lucide-react';
 import axios from 'axios';
-
-interface Bot {
-    id: number;
-    name: string;
-    description: string;
-    avatar: string | null;
-    persona: string;
-    tone: string;
-}
-
-interface Business {
-    id: number;
-    name: string;
-    bot: Bot;
-}
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { messages as messagesRoute, send } from "../../routes/business/chat";
 
 interface Message {
     id?: number;
@@ -28,18 +16,22 @@ interface Message {
 interface Props {
     business: Business;
     bot: Bot;
+    customer?: Customer;
+    conversation_id: number;
 }
 
-export default function Index({ business, bot }: Props) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [conversationId, setConversationId] = useState<number | null>(null);
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
+export default function Index({ business, bot, customer, conversation_id }: Props) {
+    const conversationId = conversation_id;
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [cartTotal, setCartTotal] = useState(0);
+    const [cartCurrency, setCartCurrency] = useState('USD');
+    const [isLoadingCart, setIsLoadingCart] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messageInputRef = useRef<HTMLInputElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -49,27 +41,23 @@ export default function Index({ business, bot }: Props) {
         scrollToBottom();
     }, [messages]);
 
-    const handleAuth = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
 
+    useEffect(() => {
+        loadMessages(conversationId);
+    }, [conversationId]);
+
+    const loadMessages = async (convId: number) => {
         try {
-            const response = await axios.post('/chat/start', {
-                business_id: business.id,
-                name,
-                phone,
+            const response = await axios.post(messagesRoute.url(business), {
+                name: customer?.name || '',
+                phone: customer?.phone || '',
             });
 
-            if (response.data.success) {
-                setConversationId(response.data.conversation_id);
-                setMessages(response.data.messages || []);
-                setIsAuthenticated(true);
+            if (response.data.success && response.data.messages) {
+                setMessages(response.data.messages);
             }
         } catch (error) {
-            console.error('Authentication failed:', error);
-            alert('Failed to start chat. Please try again.');
-        } finally {
-            setIsLoading(false);
+            console.error('Failed to load messages:', error);
         }
     };
 
@@ -86,95 +74,66 @@ export default function Index({ business, bot }: Props) {
         setMessage('');
         setIsSending(true);
 
-        try {
-            const response = await axios.post('/chat/send', {
-                conversation_id: conversationId,
-                message: userMessage.content,
-            });
+        const attemptSend = async (retryCount = 0): Promise<void> => {
+            try {
+                const response = await axios.post(send.url(business), {
+                    conversation_id: conversationId,
+                    message: userMessage.content,
+                });
 
-            if (response.data.success) {
-                setMessages(prev => [...prev, response.data.message]);
+                if (response.data.success) {
+                    setMessages(prev => [...prev, response.data.message]);
+                }
+            } catch (error) {
+                console.error(`Failed to send message (attempt ${retryCount + 1}):`, error);
+
+                if (retryCount < 1) {
+                    // Retry once
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    return attemptSend(retryCount + 1);
+                }
+
+                // Failed after retry
+                const errorMessage: Message = {
+                    role: 'assistant',
+                    content: 'Failed to connect to service. Please try again later.',
+                    created_at: new Date().toISOString(),
+                };
+                setMessages(prev => [...prev, errorMessage]);
             }
-        } catch (error) {
-            console.error('Failed to send message:', error);
-            alert('Failed to send message. Please try again.');
+        };
+
+        try {
+            await attemptSend();
         } finally {
             setIsSending(false);
+            // Refocus the input after sending
+            setTimeout(() => {
+                messageInputRef.current?.focus();
+            }, 100);
         }
     };
 
-    if (!isAuthenticated) {
-        return (
-            <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-                <Head title={`Chat with ${bot.name}`} />
+    const fetchCart = async () => {
+        setIsLoadingCart(true);
+        try {
+            const response = await axios.get('/chat/cart');
+            if (response.data.success) {
+                setCartItems(response.data.items || []);
+                setCartTotal(response.data.total || 0);
+                setCartCurrency(response.data.currency || 'USD');
+            }
+        } catch (error) {
+            console.error('Failed to fetch cart:', error);
+        } finally {
+            setIsLoadingCart(false);
+        }
+    };
 
-                <div className="w-full max-w-md">
-                    <div className="bg-white rounded-3xl shadow-2xl p-8">
-                        {/* Bot Avatar */}
-                        <div className="flex flex-col items-center mb-6">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg">
-                                {bot.avatar ? (
-                                    <img src={bot.avatar} alt={bot.name} className="w-full h-full rounded-full object-cover" />
-                                ) : (
-                                    <BotIcon size={40} className="text-white" />
-                                )}
-                            </div>
-                            <h1 className="text-2xl font-bold text-slate-900 mb-1">{bot.name}</h1>
-                            <p className="text-slate-500 text-center">{bot.description}</p>
-                        </div>
-
-                        {/* Auth Form */}
-                        <form onSubmit={handleAuth} className="space-y-4">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-semibold text-slate-700 mb-2">
-                                    Your Name
-                                </label>
-                                <input
-                                    id="name"
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                                    placeholder="John Doe"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="phone" className="block text-sm font-semibold text-slate-700 mb-2">
-                                    WhatsApp Number
-                                </label>
-                                <input
-                                    id="phone"
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                                    placeholder="+1234567890"
-                                    required
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 transition-all shadow-lg flex items-center justify-center gap-2"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <Loader2 size={20} className="animate-spin" />
-                                        Starting Chat...
-                                    </>
-                                ) : (
-                                    'Start Chat'
-                                )}
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    const handleCartOpen = () => {
+        setIsCartOpen(true);
+        fetchCart();
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex flex-col">
@@ -190,10 +149,21 @@ export default function Index({ business, bot }: Props) {
                             <BotIcon size={24} className="text-white" />
                         )}
                     </div>
-                    <div>
+                    <div className="flex-1">
                         <h1 className="font-bold text-slate-900">{bot.name}</h1>
                         <p className="text-sm text-slate-500">{business.name}</p>
                     </div>
+                    <button
+                        onClick={handleCartOpen}
+                        className="relative p-3 hover:bg-slate-100 rounded-full transition-colors"
+                    >
+                        <ShoppingBag size={24} className="text-slate-700" />
+                        {cartItems.length > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                {cartItems.length}
+                            </span>
+                        )}
+                    </button>
                 </div>
             </div>
 
@@ -215,20 +185,37 @@ export default function Index({ business, bot }: Props) {
                             className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                         >
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user'
-                                    ? 'bg-gradient-to-br from-emerald-500 to-teal-600'
-                                    : 'bg-gradient-to-br from-indigo-500 to-purple-600'
+                                ? 'bg-gradient-to-br from-emerald-500 to-teal-600'
+                                : 'bg-gradient-to-br from-indigo-500 to-purple-600'
                                 }`}>
                                 {msg.role === 'user' ? (
                                     <User size={16} className="text-white" />
                                 ) : (
-                                    <BotIcon size={16} className="text-white" />
+                                    <img src={bot.avatar ?? ''} alt={bot.name} className="w-full h-full rounded-full object-cover size-16" />
                                 )}
                             </div>
                             <div className={`max-w-[70%] px-4 py-3 rounded-2xl ${msg.role === 'user'
-                                    ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
-                                    : 'bg-white border border-slate-200 text-slate-900 shadow-sm'
+                                ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
+                                : 'bg-white border border-slate-200 text-slate-900 shadow-sm'
                                 }`}>
-                                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                                <div className="text-sm prose prose-sm max-w-none prose-p:my-1 prose-img:rounded-lg prose-img:shadow-sm prose-a:text-indigo-600 prose-a:underline">
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            img: ({ node, ...props }) => (
+                                                <img {...props} className="max-w-full rounded-lg my-2 shadow-sm" />
+                                            ),
+                                            p: ({ node, ...props }) => (
+                                                <p {...props} className="whitespace-pre-wrap mb-1 last:mb-0" />
+                                            ),
+                                            strong: ({ node, ...props }) => (
+                                                <strong {...props} className="font-bold underline" />
+                                            ),
+                                        }}
+                                    >
+                                        {msg.content}
+                                    </ReactMarkdown>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -236,7 +223,7 @@ export default function Index({ business, bot }: Props) {
                     {isSending && (
                         <div className="flex gap-3">
                             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0">
-                                <BotIcon size={16} className="text-white" />
+                                <img src={bot.avatar ?? ''} alt={bot.name} className="w-full h-full rounded-full object-cover size-16" />
                             </div>
                             <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl shadow-sm">
                                 <div className="flex gap-1">
@@ -257,6 +244,7 @@ export default function Index({ business, bot }: Props) {
                 <div className="max-w-4xl mx-auto px-4 py-4">
                     <form onSubmit={handleSendMessage} className="flex gap-3">
                         <input
+                            ref={messageInputRef}
                             type="text"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
@@ -274,6 +262,88 @@ export default function Index({ business, bot }: Props) {
                     </form>
                 </div>
             </div>
+
+            {/* Cart Sidebar */}
+            {isCartOpen && (
+                <>
+                    {/* Overlay */}
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                        onClick={() => setIsCartOpen(false)}
+                    />
+
+                    {/* Sidebar */}
+                    <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col">
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <ShoppingBag size={24} />
+                                Shopping Cart
+                            </h2>
+                            <button
+                                onClick={() => setIsCartOpen(false)}
+                                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Cart Items */}
+                        <div className="flex-1 overflow-y-auto p-4">
+                            {isLoadingCart ? (
+                                <div className="flex items-center justify-center h-32">
+                                    <Loader2 size={32} className="animate-spin text-indigo-600" />
+                                </div>
+                            ) : cartItems.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-32 text-slate-500">
+                                    <ShoppingBag size={48} className="mb-2 opacity-50" />
+                                    <p>Your cart is empty</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {cartItems.map((item) => (
+                                        <div key={item.id} className="flex gap-3 p-3 bg-slate-50 rounded-lg">
+                                            <img
+                                                src={item.product_image}
+                                                alt={item.product_name}
+                                                className="w-20 h-20 object-cover rounded-md"
+                                            />
+                                            <div className="flex-1">
+                                                <h3 className="font-semibold text-slate-900">{item.product_name}</h3>
+                                                <p className="text-sm text-slate-600">
+                                                    Qty: {item.quantity} × {item.currency}{item.price.toFixed(2)}
+                                                </p>
+                                                <p className="font-bold text-indigo-600 mt-1">
+                                                    {item.currency}{item.subtotal.toFixed(2)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Footer */}
+                        {cartItems.length > 0 && (
+                            <div className="border-t border-slate-200 p-4 space-y-4">
+                                <div className="flex justify-between items-center text-lg font-bold">
+                                    <span>Total:</span>
+                                    <span className="text-indigo-600">{cartCurrency}{cartTotal.toFixed(2)}</span>
+                                </div>
+                                <button
+                                    className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg"
+                                    onClick={() => {
+                                        // TODO: Implement checkout
+                                        alert('Checkout functionality coming soon!');
+                                    }}
+                                >
+                                    Checkout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

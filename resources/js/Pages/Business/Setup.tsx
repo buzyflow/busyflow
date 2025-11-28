@@ -2,7 +2,10 @@ import React, { FormEventHandler } from 'react';
 import { useForm, Head } from '@inertiajs/react';
 import { Store, ArrowRight, Building2 } from 'lucide-react';
 
-export default function Setup() {
+type Props = {
+    industries: string[];
+}
+export default function Setup({ industries }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         phone: '',
@@ -13,16 +16,6 @@ export default function Setup() {
         e.preventDefault();
         post('/setup-business');
     };
-
-    const industries = [
-        'Retail',
-        'Food & Beverage',
-        'Services',
-        'E-commerce',
-        'Healthcare',
-        'Education',
-        'Other',
-    ];
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">

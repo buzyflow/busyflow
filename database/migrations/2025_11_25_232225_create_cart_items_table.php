@@ -13,12 +13,18 @@ return new class extends Migration
     {
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('cart_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+
             $table->integer('quantity')->default(1);
-            $table->decimal('price', 10, 2);
-            $table->string('currency', 3)->default('USD');
+            $table->decimal('price', 10, 2);           // price at time added to cart
+            $table->string('currency', 3)->default('NGN'); // match the rest of your system
+
             $table->timestamps();
+
+            // Prevent duplicates per cart
+            $table->unique(['cart_id', 'product_id']);
         });
     }
 

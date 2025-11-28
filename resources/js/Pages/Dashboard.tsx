@@ -1,24 +1,13 @@
 import React, { FormEventHandler, useState } from 'react';
 import { Head, router, Link } from '@inertiajs/react';
 import { Bot, LogOut, Users, ShoppingBag, Package, TrendingUp, DollarSign, Sparkles, Zap, Plus } from 'lucide-react';
+import { create, index } from '../routes/business/products';
+import { index as chat } from '../routes/business/chat';
 
 
 interface DashboardProps {
-    business: {
-        id: number;
-        name: string;
-        phone: string;
-        industry: string;
-        currency: string;
-    };
-    bot: {
-        name: string;
-        description: string;
-        avatar: string;
-        persona: string;
-        tone: string;
-        active: boolean;
-    } | null;
+    business: Business
+    bot: Bot | null;
     analytics: {
         total_customers: number;
         total_orders: number;
@@ -136,14 +125,14 @@ export default function Dashboard({ business, bot, analytics, user }: DashboardP
                 {/* Quick Actions */}
                 <div className="mb-4 md:mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Link
-                        href="/products/create"
+                        href={create(business.slug)}
                         className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-lg"
                     >
                         <Plus size={20} />
                         <span>Add New Product</span>
                     </Link>
                     <Link
-                        href="/products"
+                        href={index(business)}
                         className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-all shadow-sm"
                     >
                         <Package size={20} />
@@ -151,7 +140,7 @@ export default function Dashboard({ business, bot, analytics, user }: DashboardP
                     </Link>
                     {bot && bot.active && (
                         <a
-                            href={`/chat?business_id=${business.id}`}
+                            href={chat.url(business)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-bold hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg"

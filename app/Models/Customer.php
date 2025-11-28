@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Authenticatable as Auth;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Customer extends Model
+class Customer extends Model implements Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Auth;
 
     protected $fillable = [
         'business_id',
@@ -22,26 +23,19 @@ class Customer extends Model
         'last_active' => 'datetime',
     ];
 
-    public function business(): BelongsTo
+    /**
+     * Customer can have carts for multiple businesses.
+     */
+    public function carts(): HasMany
     {
-        return $this->belongsTo(Business::class);
+        return $this->hasMany(Cart::class);
     }
 
     /**
-     * @deprecated Use business() instead
+     * Customer can have orders across multiple businesses.
      */
-    public function vendor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'vendor_id');
-    }
-
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
-    }
-
-    public function cart()
-    {
-        return $this->hasOne(Cart::class);
     }
 }

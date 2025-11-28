@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Business extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSlug;
 
     protected $fillable = [
         'user_id',
@@ -19,6 +21,7 @@ class Business extends Model
         'industry',
         'currency',
         'business_details',
+        'slug',
     ];
 
     protected function casts(): array
@@ -26,6 +29,13 @@ class Business extends Model
         return [
             'business_details' => 'array',
         ];
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 
     /**

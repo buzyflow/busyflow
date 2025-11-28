@@ -15,13 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->string('slug')->unique();
             $table->string('phone')->nullable();
             $table->string('industry')->nullable();
-            $table->string('bot_name')->default('Bot');
-            $table->string('avatar_color')->default('indigo');
             $table->string('currency')->default('NGN');
-            $table->text('welcome_message')->nullable();
-            $table->text('custom_instructions')->nullable();
             $table->json('business_details')->nullable();
             $table->timestamps();
         });

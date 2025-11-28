@@ -13,7 +13,20 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+
+            // tenant (for scoping)
+            $table->foreignId('business_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            // each customer has ONE active cart per business
+            $table->foreignId('customer_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            // ensure customer cannot have two carts in SAME business
+            $table->unique(['business_id', 'customer_id']);
+
             $table->timestamps();
         });
     }

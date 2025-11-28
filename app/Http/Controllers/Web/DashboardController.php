@@ -16,13 +16,13 @@ class DashboardController extends Controller
         /** @var User $user */
         $user = Auth::user();
         $businessId = session('active_business_id') ?? $user->businesses()->first()?->id;
-        
+
         if (!$businessId) {
             return redirect('/setup-business');
         }
-        
+
         $business = Business::with('bot')->findOrFail($businessId);
-        
+
         // Calculate analytics
         $analytics = [
             'total_customers' => $business->customers()->count(),
@@ -36,11 +36,12 @@ class DashboardController extends Controller
                 ->where('created_at', '>=', now()->subWeek())
                 ->count(),
         ];
-        
+
         return Inertia::render('Dashboard', [
             'business' => [
                 'id' => $business->id,
                 'name' => $business->name,
+                'slug' => $business->slug,
                 'phone' => $business->phone,
                 'industry' => $business->industry,
                 'currency' => $business->currency,

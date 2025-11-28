@@ -1,28 +1,19 @@
 import React, { FormEventHandler, useState } from 'react';
 import { useForm, Head, router } from '@inertiajs/react';
-import { Package, ArrowLeft, Upload, X, Save } from 'lucide-react';
-
-interface Product {
-    id: number;
-    name: string;
-    description: string;
-    price: string;
-    quantity: number;
-    category: string;
-    image: string | null;
-}
+import { ArrowLeft, Upload, X, Save } from 'lucide-react';
+import { index, update } from '../../routes/business/products';
 
 interface Props {
     product: Product;
+    business: Business;
 }
 
-export default function Edit({ product }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
-        _method: 'PUT',
+export default function Edit({ product, business }: Props) {
+    const { data, setData, put, processing, errors } = useForm({
         name: product.name,
         description: product.description || '',
         price: product.price,
-        quantity: product.quantity,
+        stock: product.stock,
         category: product.category || 'Other',
         image: null as File | null,
     });
@@ -48,7 +39,7 @@ export default function Edit({ product }: Props) {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(`/products/${product.id}`);
+        put(update.url({ business, product }));
     };
 
     const categories = [
@@ -68,7 +59,7 @@ export default function Edit({ product }: Props) {
                 <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                         <button
-                            onClick={() => router.visit('/products')}
+                            onClick={() => router.visit(index.url({ business }))}
                             className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all"
                         >
                             <ArrowLeft size={20} className="text-slate-600" />
@@ -147,12 +138,12 @@ export default function Edit({ product }: Props) {
                                     id="quantity"
                                     type="number"
                                     min="0"
-                                    value={data.quantity}
-                                    onChange={(e) => setData('quantity', e.target.value)}
+                                    value={data.stock}
+                                    onChange={(e) => setData('stock', Number(e.target.value))}
                                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
                                     placeholder="0"
                                 />
-                                {errors.quantity && <div className="text-red-600 text-sm mt-1">{errors.quantity}</div>}
+                                {errors.stock && <div className="text-red-600 text-sm mt-1">{errors.stock}</div>}
                             </div>
                         </div>
 
