@@ -123,7 +123,7 @@ logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::setupBusiness
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 export const setupBusiness = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -138,7 +138,7 @@ setupBusiness.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::setupBusiness
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 setupBusiness.url = (options?: RouteQueryOptions) => {
@@ -147,7 +147,7 @@ setupBusiness.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::setupBusiness
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 setupBusiness.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -157,7 +157,7 @@ setupBusiness.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::setupBusiness
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 setupBusiness.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({

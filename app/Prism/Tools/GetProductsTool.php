@@ -17,12 +17,11 @@ class GetProductsTool extends Tool
             ->using($this);
     }
 
-    public function __invoke(string $query = ''): array
+    public function __invoke(string $query = ''): string
     {
-        Log::info('GetProductsTool called with query: ' . $query);
         $products = Product::query()
             ->where('business_id', $this->business->id)
-            ->when($query, fn($q) => $q->where('name', 'like', "%{$query}%"))
+            ->when(filled($query), fn($q) => $q->where('name', 'like', "%{$query}%"))
             ->limit(50) // Prevent huge context
             ->get([
                 'id',
@@ -34,26 +33,27 @@ class GetProductsTool extends Tool
                 'image',
                 'stock',
             ])
-            ->map(fn($p) => [
-                'id'          => $p->id,
-                'name'        => $p->name,
-                'price'       => $p->price,
-                'currency'    => $p->currency,
-                'category'    => $p->category,
-                'description' => $p->description,
-                'image'       => $p->image,
-                'available'   => $p->stock > 0,
-            ])
+            ->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'price' => $product->price,
+                    'currency' => $product->currency,
+                    'category' => $product->category,
+                    'image' => $product->image,
+                    'available' => $product->stock > 0,
+                ];
+            })
             ->toArray();
 
-        Log::info('GetProductsTool returning products: ', [
-            'products' => $products,
-            'count' => count($products),
-        ]);
-
-        return [
+        $result = [
             'products' => $products,
             'count' => count($products),
         ];
+
+        Log::info('GetProductsTool returning products: ', $result);
+
+        return json_encode($result);
     }
 }

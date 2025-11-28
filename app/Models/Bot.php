@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BotTone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ class Bot extends Model
     {
         return [
             'active' => 'boolean',
+            'tone' => BotTone::class,
         ];
     }
 

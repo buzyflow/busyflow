@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::create
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::create
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 create.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ create.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::create
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::create
-* @see app/Http/Controllers/Web/BusinessSetupController.php:19
+* @see app/Http/Controllers/Web/BusinessSetupController.php:20
 * @route '/setup-business'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::store
-* @see app/Http/Controllers/Web/BusinessSetupController.php:26
+* @see app/Http/Controllers/Web/BusinessSetupController.php:27
 * @route '/setup-business'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -60,7 +60,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::store
-* @see app/Http/Controllers/Web/BusinessSetupController.php:26
+* @see app/Http/Controllers/Web/BusinessSetupController.php:27
 * @route '/setup-business'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\BusinessSetupController::store
-* @see app/Http/Controllers/Web/BusinessSetupController.php:26
+* @see app/Http/Controllers/Web/BusinessSetupController.php:27
 * @route '/setup-business'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({

@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/setup-business', [\App\Http\Controllers\Web\BusinessSetupController::class, 'create'])->name('setup-business');
     Route::post('/setup-business', [\App\Http\Controllers\Web\BusinessSetupController::class, 'store']);
 
-    Route::middleware('business')->prefix('{business:slug}')->name('business.')->group(function () {
+    Route::middleware(['has.business', 'business.owner'])->prefix('{business:slug}')->name('business.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
 
         Route::post('/products/bulk', [\App\Http\Controllers\Web\ProductController::class, 'bulkStore'])->name('products.bulk');

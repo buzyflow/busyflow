@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2)->default(0);
             $table->string('currency', 3)->default('NGN');
-            $table->enum('billing_period', ['monthly', 'yearly'])->default('monthly');
+            $table->string('billing_period')->default('monthly');
             $table->json('features')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);

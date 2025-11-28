@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('avatar')->nullable();
             $table->json('persona')->nullable(); // store persona as structured JSON
-            $table->enum('tone', ['friendly', 'formal', 'casual', 'humorous'])->nullable();
+            $table->string('tone')->nullable();
             $table->boolean('active')->default(true);
 
             $table->timestamps();

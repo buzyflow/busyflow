@@ -243,10 +243,10 @@ messages.post = (args: { business: string | { slug: string } } | [business: stri
 
 /**
 * @see \App\Http\Controllers\Web\ChatController::cart
-* @see app/Http/Controllers/Web/ChatController.php:254
+* @see app/Http/Controllers/Web/ChatController.php:255
 * @route '/{business}/chat/cart'
 */
-export const cart = (args: { business: string | number | { slug: string | number } } | [business: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const cart = (args: { business: string | { slug: string } } | [business: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: cart.url(args, options),
     method: 'get',
 })
@@ -258,10 +258,10 @@ cart.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\ChatController::cart
-* @see app/Http/Controllers/Web/ChatController.php:254
+* @see app/Http/Controllers/Web/ChatController.php:255
 * @route '/{business}/chat/cart'
 */
-cart.url = (args: { business: string | number | { slug: string | number } } | [business: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions) => {
+cart.url = (args: { business: string | { slug: string } } | [business: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { business: args }
     }
@@ -291,20 +291,20 @@ cart.url = (args: { business: string | number | { slug: string | number } } | [b
 
 /**
 * @see \App\Http\Controllers\Web\ChatController::cart
-* @see app/Http/Controllers/Web/ChatController.php:254
+* @see app/Http/Controllers/Web/ChatController.php:255
 * @route '/{business}/chat/cart'
 */
-cart.get = (args: { business: string | number | { slug: string | number } } | [business: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+cart.get = (args: { business: string | { slug: string } } | [business: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: cart.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Web\ChatController::cart
-* @see app/Http/Controllers/Web/ChatController.php:254
+* @see app/Http/Controllers/Web/ChatController.php:255
 * @route '/{business}/chat/cart'
 */
-cart.head = (args: { business: string | number | { slug: string | number } } | [business: string | number | { slug: string | number } ] | string | number | { slug: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+cart.head = (args: { business: string | { slug: string } } | [business: string | { slug: string } ] | string | { slug: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: cart.url(args, options),
     method: 'head',
 })

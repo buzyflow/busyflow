@@ -212,6 +212,7 @@ class ChatController extends Controller
             $response = Prism::text()
                 ->using(Provider::Gemini, 'gemini-2.5-flash-lite')
                 ->withMaxSteps(5)
+                ->withoutToolErrorHandling()
                 ->withTools([
                     new GetProductsTool($business),
                     new AddToCartTool($business, $customer),
@@ -251,7 +252,7 @@ class ChatController extends Controller
     /**
      * Get customer's cart
      */
-    public function getCart(Request $request)
+    public function getCart(Request $request, Business $business)
     {
         /** @var \App\Models\Customer $customer */
         $customer = Auth::guard('customer')->user();
@@ -263,7 +264,7 @@ class ChatController extends Controller
             ], 401);
         }
 
-        $cart = $customer->cart()->with('items.product')->first();
+        $cart = $customer->carts()->where('business_id', $business->id)->with('items.product')->first();
 
         if (!$cart) {
             return response()->json([

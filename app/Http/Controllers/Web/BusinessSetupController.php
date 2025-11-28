@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\BotTone;
 use App\Http\Controllers\Controller;
 use App\Models\Business;
 use Illuminate\Http\Request;
@@ -48,7 +49,7 @@ class BusinessSetupController extends Controller
                 'role' => 'assistant',
                 'instructions' => "You are a helpful AI assistant for {$request->name}, a business in the {$request->industry} industry. You are friendly, professional, and always ready to help customers."
             ]),
-            'tone' => 'friendly', // matches enum in bots migration
+            'tone' => BotTone::FRIENDLY,
             'active' => true,
         ]);
 

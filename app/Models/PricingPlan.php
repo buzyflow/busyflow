@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BillingPeriod;
 use Illuminate\Database\Eloquent\Model;
 
 class PricingPlan extends Model
@@ -28,6 +29,7 @@ class PricingPlan extends Model
             'features' => 'array',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'billing_period' => BillingPeriod::class,
         ];
     }
 

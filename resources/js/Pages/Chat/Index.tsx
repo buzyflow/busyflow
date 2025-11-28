@@ -4,7 +4,8 @@ import { Send, Bot as BotIcon, User, Loader2, ShoppingBag, X, Trash2 } from 'luc
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { messages as messagesRoute, send } from "../../routes/business/chat";
+import { messages as messagesRoute, send, cart as cartRoute } from "../../routes/business/chat";
+import { Business, Bot, Customer, CartItem } from '@/types';
 
 interface Message {
     id?: number;
@@ -117,7 +118,7 @@ export default function Index({ business, bot, customer, conversation_id }: Prop
     const fetchCart = async () => {
         setIsLoadingCart(true);
         try {
-            const response = await axios.get('/chat/cart');
+            const response = await axios.get(cartRoute.url(business));
             if (response.data.success) {
                 setCartItems(response.data.items || []);
                 setCartTotal(response.data.total || 0);
@@ -136,7 +137,7 @@ export default function Index({ business, bot, customer, conversation_id }: Prop
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex flex-col">
+        <div className="h-[100dvh] overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex flex-col">
             <Head title={`Chat with ${bot.name}`} />
 
             {/* Header */}
