@@ -62,22 +62,23 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('vendor.name')
-                    ->numeric()
+                    ->label('Vendor')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer.name')
-                    ->numeric()
+                    ->label('Customer')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('customer_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('customer_phone')
-                    ->searchable(),
+                    ->label('Contact Name')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('total')
-                    ->money('USD')
+                    ->formatStateUsing(fn($record) => $record->currency === 'NGN' ? '₦' . number_format($record->total, 2) : '$' . number_format($record->total, 2))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'pending' => 'warning',
                         'processing' => 'info',
                         'completed' => 'success',
@@ -88,10 +89,6 @@ class OrderResource extends Resource
                     ->label('Order Date')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -101,8 +98,13 @@ class OrderResource extends Resource
                         'completed' => 'Completed',
                         'cancelled' => 'Cancelled',
                     ]),
+                Tables\Filters\SelectFilter::make('vendor_id')
+                    ->relationship('vendor', 'name')
+                    ->label('Vendor')
+                    ->searchable(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

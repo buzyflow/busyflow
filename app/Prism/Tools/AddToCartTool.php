@@ -33,58 +33,37 @@ class AddToCartTool extends Tool
         $id = (int) $product_id;
         $quantity = max(1, (int) $quantity); // prevent zero/negative
 
-        // Get product that belongs to this business
-        $product = Product::where('business_id', $this->business->id)
-            ->where('id', $id)
-            ->first();
+        try {
+            $cartManager = new \App\Services\CartManager($this->business, $this->customer);
+            $result = $cartManager->addToCart($id, $quantity);
 
-        if (! $product) {
-            Log::warning('AddToCartTool: Product not found', [
+            Log::info('AddToCartTool: Product added successfully', [
+                'product_id' => $result->product->id,
+                'product_name' => $result->product->name,
+                'quantity' => $quantity,
+            ]);
+
+            return json_encode([
+                'status' => 'success',
+                'message' => "Added {$quantity} × '{$result->product->name}' to cart.",
+                'product' => [
+                    'id' => $result->product->id,
+                    'name' => $result->product->name,
+                    'price' => $result->product->price,
+                    'currency' => $result->product->currency
+                ],
+                'quantity_added' => $result->quantityAdded
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('AddToCartTool: Error adding to cart', [
                 'product_id' => $id,
-                'business_id' => $this->business->id,
+                'error' => $e->getMessage(),
             ]);
 
             return json_encode([
                 'status' => 'error',
-                'message' => "Product with ID {$id} not found in catalog. Please use the exact product ID from the getProducts tool."
+                'message' => $e->getMessage()
             ]);
         }
-
-        // Get or create cart for this customer for THIS specific business
-        $cart = $this->customer
-            ->carts()
-            ->firstOrCreate(['business_id' => $this->business->id]);
-
-        // Check if item already exists
-        $cartItem = $cart->items()->where('product_id', $product->id)->first();
-
-        if ($cartItem) {
-            $cartItem->increment('quantity', $quantity);
-        } else {
-            $cart->items()->create([
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $product->price,
-                'currency' => $product->currency,
-            ]);
-        }
-
-        Log::info('AddToCartTool: Product added successfully', [
-            'product_id' => $product->id,
-            'product_name' => $product->name,
-            'quantity' => $quantity,
-        ]);
-
-        return json_encode([
-            'status' => 'success',
-            'message' => "Added {$quantity} × '{$product->name}' to cart.",
-            'product' => [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
-                'currency' => $product->currency
-            ],
-            'quantity_added' => $quantity
-        ]);
     }
 }

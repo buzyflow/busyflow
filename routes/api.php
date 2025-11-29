@@ -15,6 +15,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/users/{id}', [AuthController::class, 'getUserById']); // For bot loading
 Route::get('/pricing-plans', [PricingPlanController::class, 'index']); // Public pricing plans
 
+// Paystack webhook
+Route::post('/webhooks/paystack', [\App\Http\Controllers\Api\PaystackWebhookController::class, 'handle']);
+
 // Chat (public - uses user_id parameter for context instead of auth)
 Route::post('/chat', [ChatController::class, 'chat']);
 

@@ -264,36 +264,14 @@ class ChatController extends Controller
             ], 401);
         }
 
-        $cart = $customer->carts()->where('business_id', $business->id)->with('items.product')->first();
-
-        if (!$cart) {
-            return response()->json([
-                'success' => true,
-                'items' => [],
-                'total' => 0,
-            ]);
-        }
-
-        $items = $cart->items->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'product_id' => $item->product_id,
-                'product_name' => $item->product->name,
-                'product_image' => $item->product->image,
-                'quantity' => $item->quantity,
-                'price' => $item->product->price,
-                'currency' => $item->product->currency,
-                'subtotal' => $item->quantity * $item->product->price,
-            ];
-        });
-
-        $total = $items->sum('subtotal');
+        $cartManager = new \App\Services\CartManager($business, $customer);
+        $summary = $cartManager->getCartSummary();
 
         return response()->json([
             'success' => true,
-            'items' => $items,
-            'total' => $total,
-            'currency' => $items->first()['currency'] ?? 'USD',
+            'items' => $summary->items->map(fn($item) => $item->toArray()),
+            'total' => $summary->total,
+            'currency' => $summary->currency,
         ]);
     }
 }

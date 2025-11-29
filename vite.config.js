@@ -15,4 +15,9 @@ export default defineConfig({
         tailwindcss(),
         wayfinder()
     ],
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+        },
+    },
 });

@@ -52,37 +52,35 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                    ->label('Vendor')
+                    ->searchable()
                     ->sortable(),
+                Tables\Columns\ImageColumn::make('image')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->formatStateUsing(fn($record) => $record->currency === 'NGN' ? '₦' . number_format($record->price, 2) : '$' . number_format($record->price, 2))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('currency')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('category')
-                    ->searchable(),
-                Tables\Columns\ImageColumn::make('image'),
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->options([
-                        'Electronics' => 'Electronics',
-                        'Clothing' => 'Clothing',
-                        'Food' => 'Food',
-                        'Other' => 'Other',
-                    ]),
+                    ->options(fn() => Product::distinct()->pluck('category', 'category')->filter()->toArray()),
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->relationship('user', 'name')
+                    ->label('Vendor')
+                    ->searchable(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

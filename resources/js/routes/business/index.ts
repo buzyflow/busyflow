@@ -1,5 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 import products from './products'
+import orders from './orders'
+import settings from './settings'
 import chat from './chat'
 /**
 * @see \App\Http\Controllers\Web\DashboardController::dashboard
@@ -72,6 +74,8 @@ dashboard.head = (args: { business: string | number | { slug: string | number } 
 const business = {
     dashboard: Object.assign(dashboard, dashboard),
     products: Object.assign(products, products),
+    orders: Object.assign(orders, orders),
+    settings: Object.assign(settings, settings),
     chat: Object.assign(chat, chat),
 }
 

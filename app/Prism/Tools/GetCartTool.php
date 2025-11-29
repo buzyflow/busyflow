@@ -23,13 +23,10 @@ class GetCartTool extends Tool
             'customer_id' => $this->customer->id,
         ]);
 
-        // Get cart for this specific business
-        $cart = $this->customer
-            ->carts()
-            ->where('business_id', $this->business->id)
-            ->first();
+        $cartManager = new \App\Services\CartManager($this->business, $this->customer);
+        $summary = $cartManager->getCartSummary();
 
-        if (! $cart || $cart->items()->count() === 0) {
+        if ($summary->items->isEmpty()) {
             Log::info('GetCartTool: Cart is empty');
             return json_encode([
                 'status' => 'success',
@@ -40,36 +37,28 @@ class GetCartTool extends Tool
             ]);
         }
 
-        $items = $cart->items()->with('product')->get();
-        $cartItems = [];
-        $total = 0;
-        $currency = 'NGN';
-
-        foreach ($items as $cartItem) {
-            $lineTotal = $cartItem->price * $cartItem->quantity;
-            $cartItems[] = [
-                'product_id' => $cartItem->product_id,
-                'product_name' => $cartItem->product->name,
-                'quantity' => $cartItem->quantity,
-                'price' => $cartItem->price,
-                'currency' => $cartItem->currency,
-                'line_total' => $lineTotal,
+        // Format items for the tool response
+        $formattedItems = $summary->items->map(function ($item) {
+            return [
+                'product_id' => $item->productId,
+                'product_name' => $item->productName,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+                'currency' => $item->currency,
+                'line_total' => $item->subtotal,
             ];
-
-            $total += $lineTotal;
-            $currency = $cartItem->currency;
-        }
+        });
 
         Log::info('GetCartTool: Cart retrieved', [
-            'items_count' => count($cartItems),
-            'total' => $total,
+            'items_count' => $summary->count,
+            'total' => $summary->total,
         ]);
 
         return json_encode([
             'status' => 'success',
-            'items' => $items,
-            'total' => $total,
-            'currency' => $currency
+            'items' => $formattedItems,
+            'total' => $summary->total,
+            'currency' => $summary->currency
         ]);
     }
 }

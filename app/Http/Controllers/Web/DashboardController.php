@@ -37,6 +37,20 @@ class DashboardController extends Controller
                 ->count(),
         ];
 
+        // Get recent orders
+        $recentOrders = $business->orders()
+            ->with('customer')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(fn($order) => [
+                'id' => $order->id,
+                'customer_name' => $order->customer->name ?? 'Guest',
+                'total' => $order->total,
+                'status' => $order->status,
+                'created_at' => $order->created_at->diffForHumans(),
+            ]);
+
         return Inertia::render('Dashboard', [
             'business' => [
                 'id' => $business->id,
@@ -53,8 +67,10 @@ class DashboardController extends Controller
                 'persona' => $business->bot->persona,
                 'tone' => $business->bot->tone,
                 'active' => $business->bot->active,
+                'url' => url("/{$business->slug}/bot"),
             ] : null,
             'analytics' => $analytics,
+            'recentOrders' => $recentOrders,
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,

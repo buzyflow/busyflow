@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return \Inertia\Inertia::render('Home');
 });
 
 
@@ -23,14 +23,30 @@ Route::middleware('auth')->group(function () {
     Route::get('/setup-business', [\App\Http\Controllers\Web\BusinessSetupController::class, 'create'])->name('setup-business');
     Route::post('/setup-business', [\App\Http\Controllers\Web\BusinessSetupController::class, 'store']);
 
+    // Subscription routes
+    Route::get('/subscription', [\App\Http\Controllers\Web\SubscriptionController::class, 'index'])->name('subscription.index');
+    Route::get('/subscription/plans', [\App\Http\Controllers\Web\SubscriptionController::class, 'plans'])->name('subscription.plans');
+    Route::get('/subscription/subscribe/{plan}', [\App\Http\Controllers\Web\SubscriptionController::class, 'create'])->name('subscription.create');
+    Route::get('/subscription/callback', [\App\Http\Controllers\Web\SubscriptionController::class, 'callback'])->name('subscription.callback');
+    Route::post('/subscription/cancel', [\App\Http\Controllers\Web\SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+    Route::post('/subscription/resume', [\App\Http\Controllers\Web\SubscriptionController::class, 'resume'])->name('subscription.resume');
+
     Route::middleware(['has.business', 'business.owner'])->prefix('{business:slug}')->name('business.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
 
         Route::post('/products/bulk', [\App\Http\Controllers\Web\ProductController::class, 'bulkStore'])->name('products.bulk');
         Route::resource('products', \App\Http\Controllers\Web\ProductController::class);
+        Route::get('/orders', [\App\Http\Controllers\Web\OrderController::class, 'index'])->name('orders.index');
 
         // AI Product Extraction
         Route::post('/products/extract', [\App\Http\Controllers\Api\ProductExtractionController::class, 'extract'])->name('products.extract');
+
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\Web\SettingsController::class, 'index'])->name('settings.index');
+        Route::put('/settings/profile', [\App\Http\Controllers\Web\SettingsController::class, 'updateProfile'])->name('settings.profile.update');
+        Route::put('/settings/password', [\App\Http\Controllers\Web\SettingsController::class, 'updatePassword'])->name('settings.password.update');
+        Route::put('/settings/bot', [\App\Http\Controllers\Web\SettingsController::class, 'updateBot'])->name('settings.bot.update');
+        Route::delete('/settings/account', [\App\Http\Controllers\Web\SettingsController::class, 'destroy'])->name('settings.account.destroy');
     });
 });
 

@@ -13,6 +13,7 @@ class PricingPlan extends Model
         'price',
         'currency',
         'billing_period',
+        'paystack_plan_code',
         'features',
         'is_active',
         'is_featured',
@@ -55,5 +56,13 @@ class PricingPlan extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('sort_order');
+    }
+
+    /**
+     * Get the subscriptions for this plan.
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
     }
 }

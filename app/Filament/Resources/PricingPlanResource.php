@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\BillingPeriod;
 use App\Filament\Resources\PricingPlanResource\Pages;
 use App\Filament\Resources\PricingPlanResource\RelationManagers;
 use App\Models\PricingPlan;
@@ -38,7 +39,7 @@ class PricingPlanResource extends Resource
                     ->required()
                     ->numeric()
                     ->default(0)
-                    ->prefix(fn (callable $get) => match($get('currency')) {
+                    ->prefix(fn(callable $get) => match ($get('currency')) {
                         'NGN' => '₦',
                         'USD' => '$',
                         'EUR' => '€',
@@ -58,18 +59,15 @@ class PricingPlanResource extends Resource
                     ->default('NGN')
                     ->reactive(),
                 Forms\Components\Select::make('billing_period')
-                    ->options([
-                        'monthly' => 'Monthly',
-                        'yearly' => 'Yearly',
-                    ])
+                    ->options(BillingPeriod::class)
                     ->required()
-                    ->default('monthly'),
+                    ->default(BillingPeriod::MONTHLY),
                 Forms\Components\Repeater::make('features')
-                    ->schema([
+                    ->simple(
                         Forms\Components\TextInput::make('value')
                             ->label('Feature')
                             ->required(),
-                    ])
+                    )
                     ->columnSpanFull()
                     ->defaultItems(0)
                     ->addActionLabel('Add Feature'),
@@ -118,7 +116,7 @@ class PricingPlanResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->formatStateUsing(fn ($record) => match($record->currency) {
+                    ->formatStateUsing(fn($record) => match ($record->currency) {
                         'NGN' => '₦' . number_format($record->price, 2),
                         'USD' => '$' . number_format($record->price, 2),
                         'EUR' => '€' . number_format($record->price, 2),
@@ -128,11 +126,7 @@ class PricingPlanResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('billing_period')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'monthly' => 'info',
-                        'yearly' => 'success',
-                        default => 'gray',
-                    }),
+                    ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
                     ->label('Active'),
@@ -170,10 +164,7 @@ class PricingPlanResource extends Resource
                     ->falseLabel('Not Featured')
                     ->native(false),
                 Tables\Filters\SelectFilter::make('billing_period')
-                    ->options([
-                        'monthly' => 'Monthly',
-                        'yearly' => 'Yearly',
-                    ]),
+                    ->options(BillingPeriod::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

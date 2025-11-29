@@ -27,14 +27,16 @@ class CustomerResource extends Resource
             ->schema([
                 Forms\Components\Select::make('vendor_id')
                     ->relationship('vendor', 'name')
-                    ->required(),
+                    ->required()
+                    ->searchable(),
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
                     ->tel()
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('last_active')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\DateTimePicker::make('last_active'),
             ]);
     }
 
@@ -43,28 +45,33 @@ class CustomerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('vendor.name')
-                    ->numeric()
+                    ->label('Vendor')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('phone')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->weight('bold'),
+                Tables\Columns\TextColumn::make('phone')
+                    ->searchable()
+                    ->icon('heroicon-m-phone'),
                 Tables\Columns\TextColumn::make('last_active')
                     ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                    ->placeholder('Never'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Joined')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('vendor_id')
+                    ->relationship('vendor', 'name')
+                    ->label('Vendor')
+                    ->searchable(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

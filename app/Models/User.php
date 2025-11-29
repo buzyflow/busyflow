@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Traits\HasSubscriptions, \Illuminate\Database\Eloquent\SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -76,6 +76,9 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Customer::class, 'vendor_id');
     }
 
+    /**
+     * Get the orders for the vendor.
+     */
     /**
      * Get the orders for the vendor.
      */
