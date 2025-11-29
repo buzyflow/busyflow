@@ -3,7 +3,7 @@ import businesses from './businesses'
 import conversations from './conversations'
 import customers from './customers'
 import orders from './orders'
-import pricingPlans from './pricing-plans'
+import plans from './plans'
 import products from './products'
 import subscriptions from './subscriptions'
 import users from './users'
@@ -14,7 +14,7 @@ const resources = {
     conversations: Object.assign(conversations, conversations),
     customers: Object.assign(customers, customers),
     orders: Object.assign(orders, orders),
-    pricingPlans: Object.assign(pricingPlans, pricingPlans),
+    plans: Object.assign(plans, plans),
     products: Object.assign(products, products),
     subscriptions: Object.assign(subscriptions, subscriptions),
     users: Object.assign(users, users),

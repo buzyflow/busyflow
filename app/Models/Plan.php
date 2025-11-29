@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Enums\BillingPeriod;
 use Illuminate\Database\Eloquent\Model;
 
-class PricingPlan extends Model
+class Plan extends Model
 {
     protected $fillable = [
         'name',

@@ -3,9 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Enums\BillingPeriod;
-use App\Filament\Resources\PricingPlanResource\Pages;
-use App\Filament\Resources\PricingPlanResource\RelationManagers;
-use App\Models\PricingPlan;
+use App\Filament\Resources\PlanResource\Pages;
+use App\Filament\Resources\PlanResource\RelationManagers;
+use App\Models\Plan;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,9 +14,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PricingPlanResource extends Resource
+class PlanResource extends Resource
 {
-    protected static ?string $model = PricingPlan::class;
+    protected static ?string $model = Plan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
@@ -186,9 +186,9 @@ class PricingPlanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPricingPlans::route('/'),
-            'create' => Pages\CreatePricingPlan::route('/create'),
-            'edit' => Pages\EditPricingPlan::route('/{record}/edit'),
+            'index' => Pages\ListPlans::route('/'),
+            'create' => Pages\CreatePlan::route('/create'),
+            'edit' => Pages\EditPlan::route('/{record}/edit'),
         ];
     }
 }

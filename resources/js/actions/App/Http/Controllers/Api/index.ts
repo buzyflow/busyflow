@@ -1,5 +1,5 @@
 import AuthController from './AuthController'
-import PricingPlanController from './PricingPlanController'
+import PlanController from './PlanController'
 import PaystackWebhookController from './PaystackWebhookController'
 import ChatController from './ChatController'
 import ProductController from './ProductController'
@@ -9,7 +9,7 @@ import ProductExtractionController from './ProductExtractionController'
 
 const Api = {
     AuthController: Object.assign(AuthController, AuthController),
-    PricingPlanController: Object.assign(PricingPlanController, PricingPlanController),
+    PlanController: Object.assign(PlanController, PlanController),
     PaystackWebhookController: Object.assign(PaystackWebhookController, PaystackWebhookController),
     ChatController: Object.assign(ChatController, ChatController),
     ProductController: Object.assign(ProductController, ProductController),

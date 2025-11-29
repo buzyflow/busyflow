@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pricing_plans', function (Blueprint $table) {
+        Schema::table('plans', function (Blueprint $table) {
             $table->string('paystack_plan_code')->unique()->nullable()->after('billing_period');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pricing_plans', function (Blueprint $table) {
+        Schema::table('plans', function (Blueprint $table) {
             $table->dropColumn('paystack_plan_code');
         });
     }

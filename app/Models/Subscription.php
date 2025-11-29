@@ -9,7 +9,7 @@ class Subscription extends Model
 {
     protected $fillable = [
         'user_id',
-        'pricing_plan_id',
+        'plan_id',
         'paystack_subscription_code',
         'paystack_customer_code',
         'paystack_email_token',
@@ -41,9 +41,9 @@ class Subscription extends Model
     /**
      * Get the pricing plan for the subscription.
      */
-    public function pricingPlan(): BelongsTo
+    public function plan(): BelongsTo
     {
-        return $this->belongsTo(PricingPlan::class);
+        return $this->belongsTo(Plan::class);
     }
 
     /**

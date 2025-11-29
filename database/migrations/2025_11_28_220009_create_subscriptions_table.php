@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('pricing_plan_id')->constrained()->onDelete('cascade');
+            $table->foreignId('plan_id')->constrained()->onDelete('cascade');
             $table->string('paystack_subscription_code')->unique()->nullable();
             $table->string('paystack_customer_code')->nullable();
             $table->string('paystack_email_token')->nullable();

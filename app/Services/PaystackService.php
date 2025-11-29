@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\PricingPlan;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -24,20 +24,20 @@ class PaystackService
     /**
      * Create a plan on Paystack.
      */
-    public function createPlan(PricingPlan $pricingPlan): array
+    public function createPlan(Plan $Plan): array
     {
         $response = Http::withToken($this->secretKey)
             ->post("{$this->baseUrl}/plan", [
-                'name' => $pricingPlan->name,
-                'amount' => $pricingPlan->price * 100, // Convert to kobo
-                'interval' => $pricingPlan->billing_period->value,
-                'currency' => $pricingPlan->currency,
-                'description' => $pricingPlan->description,
+                'name' => $Plan->name,
+                'amount' => $Plan->price * 100, // Convert to kobo
+                'interval' => $Plan->billing_period->value,
+                'currency' => $Plan->currency,
+                'description' => $Plan->description,
             ]);
 
         if (!$response->successful()) {
             Log::error('Paystack plan creation failed', [
-                'plan_id' => $pricingPlan->id,
+                'plan_id' => $Plan->id,
                 'response' => $response->json(),
             ]);
             throw new \Exception('Failed to create plan on Paystack: ' . $response->json('message'));
@@ -49,25 +49,25 @@ class PaystackService
     /**
      * Update a plan on Paystack.
      */
-    public function updatePlan(PricingPlan $pricingPlan): array
+    public function updatePlan(Plan $Plan): array
     {
-        if (!$pricingPlan->paystack_plan_code) {
+        if (!$Plan->paystack_plan_code) {
             throw new \Exception('Cannot update plan: Paystack plan code not found');
         }
 
         $response = Http::withToken($this->secretKey)
-            ->put("{$this->baseUrl}/plan/{$pricingPlan->paystack_plan_code}", [
-                'name' => $pricingPlan->name,
-                'amount' => $pricingPlan->price * 100, // Convert to kobo
-                'interval' => $pricingPlan->billing_period->value,
-                'currency' => $pricingPlan->currency,
-                'description' => $pricingPlan->description,
+            ->put("{$this->baseUrl}/plan/{$Plan->paystack_plan_code}", [
+                'name' => $Plan->name,
+                'amount' => $Plan->price * 100, // Convert to kobo
+                'interval' => $Plan->billing_period->value,
+                'currency' => $Plan->currency,
+                'description' => $Plan->description,
             ]);
 
         if (!$response->successful()) {
             Log::error('Paystack plan update failed', [
-                'plan_id' => $pricingPlan->id,
-                'paystack_plan_code' => $pricingPlan->paystack_plan_code,
+                'plan_id' => $Plan->id,
+                'paystack_plan_code' => $Plan->paystack_plan_code,
                 'response' => $response->json(),
             ]);
             throw new \Exception('Failed to update plan on Paystack: ' . $response->json('message'));
@@ -94,7 +94,7 @@ class PaystackService
     /**
      * Initialize a transaction for subscription.
      */
-    public function initializeTransaction(User $user, PricingPlan $plan, ?string $callbackUrl = null): array
+    public function initializeTransaction(User $user, Plan $plan, ?string $callbackUrl = null): array
     {
         // Create plan in Paystack if it doesn't exist
         if (!$plan->paystack_plan_code) {
@@ -111,7 +111,7 @@ class PaystackService
                 'callback_url' => $callbackUrl ?? route('subscription.callback'),
                 'metadata' => [
                     'user_id' => $user->id,
-                    'pricing_plan_id' => $plan->id,
+                    'plan_id' => $plan->id,
                     'custom_fields' => [
                         [
                             'display_name' => 'User Name',
@@ -156,11 +156,11 @@ class PaystackService
     /**
      * Create a subscription after successful payment.
      */
-    public function createSubscription(User $user, PricingPlan $plan, array $transactionData): Subscription
+    public function createSubscription(User $user, Plan $plan, array $transactionData): Subscription
     {
         $subscription = Subscription::create([
             'user_id' => $user->id,
-            'pricing_plan_id' => $plan->id,
+            'plan_id' => $plan->id,
             'paystack_subscription_code' => $transactionData['subscription']['subscription_code'] ?? null,
             'paystack_customer_code' => $transactionData['customer']['customer_code'] ?? null,
             'paystack_email_token' => $transactionData['customer']['email'] ?? null,
@@ -297,7 +297,7 @@ class PaystackService
                 // Update subscription period
                 $subscription->update([
                     'current_period_start' => now(),
-                    'current_period_end' => $this->calculatePeriodEnd($subscription->pricingPlan->billing_period->value),
+                    'current_period_end' => $this->calculatePeriodEnd($subscription->Plan->billing_period->value),
                 ]);
 
                 Log::info('Subscription renewed via webhook', ['subscription_id' => $subscription->id]);

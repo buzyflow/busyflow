@@ -1,0 +1,64 @@
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../../wayfinder'
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
+*/
+const EditPlan = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: EditPlan.url(args, options),
+    method: 'get',
+})
+
+EditPlan.definition = {
+    methods: ["get","head"],
+    url: '/admin/plans/{record}/edit',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
+*/
+EditPlan.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { record: args }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            record: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        record: args.record,
+    }
+
+    return EditPlan.definition.url
+            .replace('{record}', parsedArgs.record.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
+*/
+EditPlan.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: EditPlan.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
+*/
+EditPlan.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: EditPlan.url(args, options),
+    method: 'head',
+})
+
+export default EditPlan

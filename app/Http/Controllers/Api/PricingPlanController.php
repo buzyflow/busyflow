@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PricingPlan;
+use App\Models\Plan;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PricingPlanController extends Controller
+class PlanController extends Controller
 {
     /**
      * Get all active pricing plans.
      */
     public function index(): JsonResponse
     {
-        $pricingPlans = PricingPlan::active()
+        $Plans = Plan::active()
             ->ordered()
             ->get([
                 'id',
@@ -32,7 +32,7 @@ class PricingPlanController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $pricingPlans,
+            'data' => $Plans,
         ]);
     }
 }

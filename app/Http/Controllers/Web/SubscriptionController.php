@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\PricingPlan;
+use App\Models\Plan;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,7 +19,7 @@ class SubscriptionController extends Controller
     {
         $user = $request->user();
         $subscription = $user->subscription();
-        $plans = PricingPlan::orderBy('price')->get();
+        $plans = Plan::orderBy('price')->get();
 
         return Inertia::render('Subscription/Plans', [
             'plans' => $plans->map(fn($plan) => [
@@ -33,7 +33,7 @@ class SubscriptionController extends Controller
                 'is_featured' => $plan->is_featured,
             ]),
             'currentSubscription' => $subscription ? [
-                'plan_id' => $subscription->pricing_plan_id,
+                'plan_id' => $subscription->plan_id,
                 'status' => $subscription->status,
             ] : null,
         ]);
@@ -50,12 +50,7 @@ class SubscriptionController extends Controller
         return Inertia::render('Subscription/Index', [
             'subscription' => $subscription ? [
                 'id' => $subscription->id,
-                'plan' => [
-                    'name' => $subscription->pricingPlan->name,
-                    'price' => $subscription->pricingPlan->price,
-                    'currency' => $subscription->pricingPlan->currency,
-                    'billing_period' => $subscription->pricingPlan->billing_period->value,
-                ],
+                'plan' => $subscription->plan->only(['id', 'name', 'price', 'currency', 'billing_period']),
                 'status' => $subscription->status,
                 'trial_ends_at' => $subscription->trial_ends_at?->toDateTimeString(),
                 'current_period_end' => $subscription->current_period_end?->toDateTimeString(),
@@ -69,7 +64,7 @@ class SubscriptionController extends Controller
     /**
      * Initialize subscription payment.
      */
-    public function create(Request $request, PricingPlan $plan)
+    public function create(Request $request, Plan $plan)
     {
         try {
             $result = $this->subscriptionService->subscribe($request->user(), $plan);

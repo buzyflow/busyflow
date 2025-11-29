@@ -1,0 +1,46 @@
+import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../../wayfinder'
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
+*/
+const ListPlans = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: ListPlans.url(options),
+    method: 'get',
+})
+
+ListPlans.definition = {
+    methods: ["get","head"],
+    url: '/admin/plans',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
+*/
+ListPlans.url = (options?: RouteQueryOptions) => {
+    return ListPlans.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
+*/
+ListPlans.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: ListPlans.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
+*/
+ListPlans.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: ListPlans.url(options),
+    method: 'head',
+})
+
+export default ListPlans

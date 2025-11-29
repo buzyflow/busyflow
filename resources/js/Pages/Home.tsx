@@ -3,7 +3,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { Bot, Sparkles, Zap, Shield, TrendingUp, MessageSquare, ShoppingCart, BarChart3 } from 'lucide-react';
 import { login } from '@/routes';
 
-interface PricingPlan {
+interface Plan {
     id: number;
     name: string;
     description: string;
@@ -16,7 +16,7 @@ interface PricingPlan {
 
 export default function Home() {
     const { appName, auth } = usePage<PageProps>().props;
-    const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([]);
+    const [Plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function Home() {
         fetch('/api/pricing-plans')
             .then(res => res.json())
             .then(data => {
-                setPricingPlans(data.data || []);
+                setPlans(data.data || []);
                 setLoading(false);
             })
             .catch(error => {
@@ -239,13 +239,13 @@ export default function Home() {
                         <div className="flex justify-center items-center py-20">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
                         </div>
-                    ) : pricingPlans.length === 0 ? (
+                    ) : Plans.length === 0 ? (
                         <div className="text-center py-20">
                             <p className="text-slate-500 text-lg">No pricing plans available at the moment.</p>
                         </div>
                     ) : (
                         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                            {pricingPlans.map((plan) => {
+                            {Plans.map((plan) => {
                                 const isFeatured = plan.is_featured;
                                 return (
                                     <div

@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Enums\BillingPeriod;
-use App\Models\PricingPlan;
+use App\Models\Plan;
 use Illuminate\Database\Seeder;
 
-class PricingPlanSeeder extends Seeder
+class PlanSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -78,7 +78,7 @@ class PricingPlanSeeder extends Seeder
         ];
 
         foreach ($plans as $plan) {
-            PricingPlan::updateOrCreate(
+            Plan::updateOrCreate(
                 ['name' => $plan['name']],
                 $plan
             );

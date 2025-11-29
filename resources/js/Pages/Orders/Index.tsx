@@ -123,7 +123,12 @@ export default function Index({ business, orders }: Props) {
                                     orders.data.map((order) => (
                                         <tr key={order.id} className="hover:bg-slate-50 transition-colors group">
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="font-mono text-sm font-medium text-indigo-600">#{order.id}</span>
+                                                <Link
+                                                    href={`/${business.slug}/orders/${order.id}`}
+                                                    className="font-mono text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                                                >
+                                                    #{order.id}
+                                                </Link>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex flex-col">
@@ -158,9 +163,12 @@ export default function Index({ business, orders }: Props) {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                <button className="text-slate-400 hover:text-indigo-600 transition-colors p-2 hover:bg-indigo-50 rounded-lg">
+                                                <Link
+                                                    href={`/${business.slug}/orders/${order.id}`}
+                                                    className="text-slate-400 hover:text-indigo-600 transition-colors p-2 hover:bg-indigo-50 rounded-lg inline-flex"
+                                                >
                                                     <ChevronRight size={20} />
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))

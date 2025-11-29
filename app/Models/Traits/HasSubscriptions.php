@@ -18,7 +18,7 @@ trait HasSubscriptions
     /**
      * Get the user's current active subscription.
      */
-    public function subscription()
+    public function subscription(): ?Subscription
     {
         return $this->subscriptions()
             ->where(function ($query) {
@@ -45,7 +45,7 @@ trait HasSubscriptions
     {
         $subscription = $this->subscription();
         return $subscription &&
-            $subscription->pricing_plan_id === $planId &&
+            $subscription->plan_id === $planId &&
             $subscription->isValid();
     }
 

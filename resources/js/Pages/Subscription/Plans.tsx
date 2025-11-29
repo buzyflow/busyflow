@@ -4,7 +4,7 @@ import { Check, Sparkles, Zap, Crown } from 'lucide-react';
 import subscription from '@/routes/subscription';
 import AppLayout from '@/Layouts/AppLayout';
 
-interface PricingPlan {
+interface Plan {
     id: number;
     name: string;
     description: string;
@@ -16,7 +16,7 @@ interface PricingPlan {
 }
 
 interface Props {
-    plans: PricingPlan[];
+    plans: Plan[];
     currentSubscription: {
         plan_id: number;
         status: string;
@@ -71,8 +71,8 @@ export default function Plans({ plans, currentSubscription }: Props) {
                             <div
                                 key={plan.id}
                                 className={`relative flex flex-col h-full bg-white rounded-2xl transition-all duration-300 ${isFeatured
-                                        ? 'shadow-2xl ring-2 ring-indigo-600 scale-105 z-10'
-                                        : 'shadow-lg hover:shadow-xl border border-slate-200'
+                                    ? 'shadow-2xl ring-2 ring-indigo-600 scale-105 z-10'
+                                    : 'shadow-lg hover:shadow-xl border border-slate-200'
                                     }`}
                             >
                                 {isFeatured && (
@@ -134,8 +134,8 @@ export default function Plans({ plans, currentSubscription }: Props) {
                                         <Link
                                             href={subscription.create.url(plan.id)}
                                             className={`block w-full py-3.5 px-6 text-center rounded-xl font-bold transition-all duration-200 ${isFeatured
-                                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:scale-[1.02]'
-                                                    : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+                                                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:shadow-lg hover:scale-[1.02]'
+                                                : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
                                                 }`}
                                         >
                                             {currentSubscription ? 'Switch to This Plan' : (plan.price === 0 ? 'Get Started Free' : 'Start 14-Day Trial')}

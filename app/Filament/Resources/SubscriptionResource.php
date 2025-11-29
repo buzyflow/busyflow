@@ -26,8 +26,8 @@ class SubscriptionResource extends Resource
                     ->relationship('user', 'name')
                     ->required()
                     ->searchable(),
-                Forms\Components\Select::make('pricing_plan_id')
-                    ->relationship('pricingPlan', 'name')
+                Forms\Components\Select::make('plan_id')
+                    ->relationship('Plan', 'name')
                     ->required(),
                 Forms\Components\TextInput::make('paystack_subscription_code')
                     ->label('Paystack Subscription Code')
@@ -58,7 +58,7 @@ class SubscriptionResource extends Resource
                     ->label('User')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('pricingPlan.name')
+                Tables\Columns\TextColumn::make('Plan.name')
                     ->label('Plan')
                     ->sortable()
                     ->badge()
@@ -89,8 +89,8 @@ class SubscriptionResource extends Resource
                         'cancelled' => 'Cancelled',
                         'expired' => 'Expired',
                     ]),
-                Tables\Filters\SelectFilter::make('pricing_plan_id')
-                    ->relationship('pricingPlan', 'name')
+                Tables\Filters\SelectFilter::make('plan_id')
+                    ->relationship('Plan', 'name')
                     ->label('Plan'),
             ])
             ->actions([

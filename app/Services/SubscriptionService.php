@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\PricingPlan;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use Exception;
@@ -19,11 +19,11 @@ class SubscriptionService
      * or the created Subscription model for free plans.
      *
      * @param User $user
-     * @param PricingPlan $plan
+     * @param Plan $plan
      * @return array|Subscription
      * @throws Exception
      */
-    public function subscribe(User $user, PricingPlan $plan): array|Subscription
+    public function subscribe(User $user, Plan $plan): array|Subscription
     {
         if ($user->subscribed()) {
             throw new Exception('User already has an active subscription.');
@@ -42,11 +42,11 @@ class SubscriptionService
      * Create a local subscription for a free plan.
      *
      * @param User $user
-     * @param PricingPlan $plan
+     * @param Plan $plan
      * @return Subscription
      * @throws Exception
      */
-    protected function createFreeSubscription(User $user, PricingPlan $plan): Subscription
+    protected function createFreeSubscription(User $user, Plan $plan): Subscription
     {
         try {
             return DB::transaction(function () use ($user, $plan) {
@@ -80,14 +80,14 @@ class SubscriptionService
             throw new Exception('Payment was not successful.');
         }
 
-        $planId = $transaction['metadata']['pricing_plan_id'] ?? null;
+        $planId = $transaction['metadata']['plan_id'] ?? null;
         $userId = $transaction['metadata']['user_id'] ?? null;
 
         if (!$planId || !$userId) {
             throw new Exception('Invalid transaction metadata.');
         }
 
-        $plan = PricingPlan::findOrFail($planId);
+        $plan = Plan::findOrFail($planId);
         $user = User::findOrFail($userId);
 
         return $this->paystackService->createSubscription($user, $plan, $transaction);

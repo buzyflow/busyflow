@@ -89,10 +89,10 @@ plans.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::create
-* @see app/Http/Controllers/Web/SubscriptionController.php:72
+* @see app/Http/Controllers/Web/SubscriptionController.php:67
 * @route '/subscription/subscribe/{plan}'
 */
-export const create = (args: { plan: number | { id: number } } | [plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const create = (args: { plan: string | number | { id: string | number } } | [plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(args, options),
     method: 'get',
 })
@@ -104,10 +104,10 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::create
-* @see app/Http/Controllers/Web/SubscriptionController.php:72
+* @see app/Http/Controllers/Web/SubscriptionController.php:67
 * @route '/subscription/subscribe/{plan}'
 */
-create.url = (args: { plan: number | { id: number } } | [plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+create.url = (args: { plan: string | number | { id: string | number } } | [plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { plan: args }
     }
@@ -137,27 +137,27 @@ create.url = (args: { plan: number | { id: number } } | [plan: number | { id: nu
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::create
-* @see app/Http/Controllers/Web/SubscriptionController.php:72
+* @see app/Http/Controllers/Web/SubscriptionController.php:67
 * @route '/subscription/subscribe/{plan}'
 */
-create.get = (args: { plan: number | { id: number } } | [plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+create.get = (args: { plan: string | number | { id: string | number } } | [plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::create
-* @see app/Http/Controllers/Web/SubscriptionController.php:72
+* @see app/Http/Controllers/Web/SubscriptionController.php:67
 * @route '/subscription/subscribe/{plan}'
 */
-create.head = (args: { plan: number | { id: number } } | [plan: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+create.head = (args: { plan: string | number | { id: string | number } } | [plan: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::callback
-* @see app/Http/Controllers/Web/SubscriptionController.php:106
+* @see app/Http/Controllers/Web/SubscriptionController.php:101
 * @route '/subscription/callback'
 */
 export const callback = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -172,7 +172,7 @@ callback.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::callback
-* @see app/Http/Controllers/Web/SubscriptionController.php:106
+* @see app/Http/Controllers/Web/SubscriptionController.php:101
 * @route '/subscription/callback'
 */
 callback.url = (options?: RouteQueryOptions) => {
@@ -181,7 +181,7 @@ callback.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::callback
-* @see app/Http/Controllers/Web/SubscriptionController.php:106
+* @see app/Http/Controllers/Web/SubscriptionController.php:101
 * @route '/subscription/callback'
 */
 callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -191,7 +191,7 @@ callback.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::callback
-* @see app/Http/Controllers/Web/SubscriptionController.php:106
+* @see app/Http/Controllers/Web/SubscriptionController.php:101
 * @route '/subscription/callback'
 */
 callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -201,7 +201,7 @@ callback.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::cancel
-* @see app/Http/Controllers/Web/SubscriptionController.php:129
+* @see app/Http/Controllers/Web/SubscriptionController.php:124
 * @route '/subscription/cancel'
 */
 export const cancel = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -216,7 +216,7 @@ cancel.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::cancel
-* @see app/Http/Controllers/Web/SubscriptionController.php:129
+* @see app/Http/Controllers/Web/SubscriptionController.php:124
 * @route '/subscription/cancel'
 */
 cancel.url = (options?: RouteQueryOptions) => {
@@ -225,7 +225,7 @@ cancel.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::cancel
-* @see app/Http/Controllers/Web/SubscriptionController.php:129
+* @see app/Http/Controllers/Web/SubscriptionController.php:124
 * @route '/subscription/cancel'
 */
 cancel.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -235,7 +235,7 @@ cancel.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::resume
-* @see app/Http/Controllers/Web/SubscriptionController.php:145
+* @see app/Http/Controllers/Web/SubscriptionController.php:140
 * @route '/subscription/resume'
 */
 export const resume = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -250,7 +250,7 @@ resume.definition = {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::resume
-* @see app/Http/Controllers/Web/SubscriptionController.php:145
+* @see app/Http/Controllers/Web/SubscriptionController.php:140
 * @route '/subscription/resume'
 */
 resume.url = (options?: RouteQueryOptions) => {
@@ -259,7 +259,7 @@ resume.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Web\SubscriptionController::resume
-* @see app/Http/Controllers/Web/SubscriptionController.php:145
+* @see app/Http/Controllers/Web/SubscriptionController.php:140
 * @route '/subscription/resume'
 */
 resume.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({

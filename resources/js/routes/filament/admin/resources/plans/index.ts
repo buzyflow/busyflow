@@ -1,8 +1,8 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../../wayfinder'
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\ListPricingPlans::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/ListPricingPlans.php:7
-* @route '/admin/pricing-plans'
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -11,22 +11,22 @@ export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 index.definition = {
     methods: ["get","head"],
-    url: '/admin/pricing-plans',
+    url: '/admin/plans',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\ListPricingPlans::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/ListPricingPlans.php:7
-* @route '/admin/pricing-plans'
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
 */
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\ListPricingPlans::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/ListPricingPlans.php:7
-* @route '/admin/pricing-plans'
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
@@ -34,9 +34,9 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\ListPricingPlans::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/ListPricingPlans.php:7
-* @route '/admin/pricing-plans'
+* @see \App\Filament\Resources\PlanResource\Pages\ListPlans::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/ListPlans.php:7
+* @route '/admin/plans'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
@@ -44,9 +44,9 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\CreatePricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/CreatePricingPlan.php:7
-* @route '/admin/pricing-plans/create'
+* @see \App\Filament\Resources\PlanResource\Pages\CreatePlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/CreatePlan.php:7
+* @route '/admin/plans/create'
 */
 export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
@@ -55,22 +55,22 @@ export const create = (options?: RouteQueryOptions): RouteDefinition<'get'> => (
 
 create.definition = {
     methods: ["get","head"],
-    url: '/admin/pricing-plans/create',
+    url: '/admin/plans/create',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\CreatePricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/CreatePricingPlan.php:7
-* @route '/admin/pricing-plans/create'
+* @see \App\Filament\Resources\PlanResource\Pages\CreatePlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/CreatePlan.php:7
+* @route '/admin/plans/create'
 */
 create.url = (options?: RouteQueryOptions) => {
     return create.definition.url + queryParams(options)
 }
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\CreatePricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/CreatePricingPlan.php:7
-* @route '/admin/pricing-plans/create'
+* @see \App\Filament\Resources\PlanResource\Pages\CreatePlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/CreatePlan.php:7
+* @route '/admin/plans/create'
 */
 create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: create.url(options),
@@ -78,9 +78,9 @@ create.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\CreatePricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/CreatePricingPlan.php:7
-* @route '/admin/pricing-plans/create'
+* @see \App\Filament\Resources\PlanResource\Pages\CreatePlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/CreatePlan.php:7
+* @route '/admin/plans/create'
 */
 create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: create.url(options),
@@ -88,9 +88,9 @@ create.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\EditPricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/EditPricingPlan.php:7
-* @route '/admin/pricing-plans/{record}/edit'
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
 */
 export const edit = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
@@ -99,13 +99,13 @@ export const edit = (args: { record: string | number } | [record: string | numbe
 
 edit.definition = {
     methods: ["get","head"],
-    url: '/admin/pricing-plans/{record}/edit',
+    url: '/admin/plans/{record}/edit',
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\EditPricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/EditPricingPlan.php:7
-* @route '/admin/pricing-plans/{record}/edit'
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
 */
 edit.url = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
@@ -130,9 +130,9 @@ edit.url = (args: { record: string | number } | [record: string | number ] | str
 }
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\EditPricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/EditPricingPlan.php:7
-* @route '/admin/pricing-plans/{record}/edit'
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
 */
 edit.get = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
@@ -140,19 +140,19 @@ edit.get = (args: { record: string | number } | [record: string | number ] | str
 })
 
 /**
-* @see \App\Filament\Resources\PricingPlanResource\Pages\EditPricingPlan::__invoke
-* @see app/Filament/Resources/PricingPlanResource/Pages/EditPricingPlan.php:7
-* @route '/admin/pricing-plans/{record}/edit'
+* @see \App\Filament\Resources\PlanResource\Pages\EditPlan::__invoke
+* @see app/Filament/Resources/PlanResource/Pages/EditPlan.php:7
+* @route '/admin/plans/{record}/edit'
 */
 edit.head = (args: { record: string | number } | [record: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
 
-const pricingPlans = {
+const plans = {
     index: Object.assign(index, index),
     create: Object.assign(create, create),
     edit: Object.assign(edit, edit),
 }
 
-export default pricingPlans
+export default plans

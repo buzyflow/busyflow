@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\PricingPlanController;
+use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductExtractionController;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/users/{id}', [AuthController::class, 'getUserById']); // For bot loading
-Route::get('/pricing-plans', [PricingPlanController::class, 'index']); // Public pricing plans
+Route::get('/pricing-plans', [PlanController::class, 'index']); // Public pricing plans
 
 // Paystack webhook
 Route::post('/webhooks/paystack', [\App\Http\Controllers\Api\PaystackWebhookController::class, 'handle']);

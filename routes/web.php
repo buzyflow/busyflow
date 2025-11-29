@@ -37,6 +37,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/products/bulk', [\App\Http\Controllers\Web\ProductController::class, 'bulkStore'])->name('products.bulk');
         Route::resource('products', \App\Http\Controllers\Web\ProductController::class);
         Route::get('/orders', [\App\Http\Controllers\Web\OrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{order}', [\App\Http\Controllers\Web\OrderController::class, 'show'])->name('orders.show');
+        Route::put('/orders/{order}/status', [\App\Http\Controllers\Web\OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
         // AI Product Extraction
         Route::post('/products/extract', [\App\Http\Controllers\Api\ProductExtractionController::class, 'extract'])->name('products.extract');

@@ -164,8 +164,12 @@ class CartManager
     /**
      * Place an order from the current cart.
      */
-    public function placeOrder(): Order
-    {
+    public function placeOrder(
+        ?string $deliveryAddress = null,
+        ?string $deliveryCity = null,
+        ?string $deliveryState = null,
+        ?string $deliveryNotes = null
+    ): Order {
         $summary = $this->getCartSummary();
 
         if ($summary->items->isEmpty()) {
@@ -177,17 +181,21 @@ class CartManager
 
         // Create order record
         $order = Order::create([
-            'customer_id'    => $this->customer->id,
-            'business_id'    => $this->business->id,
-            'order_number'   => $orderNumber,
-            'customer_name'  => $this->customer->name,
-            'customer_phone' => $this->customer->phone,
-            'subtotal'       => $summary->total,
-            'total'          => $summary->total,
-            'currency'       => $summary->currency,
-            'status'         => 'PENDING',
-            'payment_status' => 'UNPAID',
-            'ordered_at'     => now(),
+            'customer_id'      => $this->customer->id,
+            'business_id'      => $this->business->id,
+            'order_number'     => $orderNumber,
+            'customer_name'    => $this->customer->name,
+            'customer_phone'   => $this->customer->phone,
+            'delivery_address' => $deliveryAddress,
+            'delivery_city'    => $deliveryCity,
+            'delivery_state'   => $deliveryState,
+            'delivery_notes'   => $deliveryNotes,
+            'subtotal'         => $summary->total,
+            'total'            => $summary->total,
+            'currency'         => $summary->currency,
+            'status'           => 'PENDING',
+            'payment_status'   => 'UNPAID',
+            'ordered_at'       => now(),
         ]);
 
         // Create order items

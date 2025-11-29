@@ -2,33 +2,33 @@
 
 namespace App\Observers;
 
-use App\Models\PricingPlan;
+use App\Models\Plan;
 use App\Services\PaystackService;
 use Illuminate\Support\Facades\Log;
 
-class PricingPlanObserver
+class PlanObserver
 {
     public function __construct(protected PaystackService $paystackService) {}
 
     /**
-     * Handle the PricingPlan "creating" event.
+     * Handle the Plan "creating" event.
      * Create plan in Paystack before saving to database.
      */
-    public function creating(PricingPlan $pricingPlan): void
+    public function creating(Plan $Plan): void
     {
         // Only create in Paystack if price > 0 (paid plans)
-        if ($pricingPlan->price > 0) {
+        if ($Plan->price > 0) {
             try {
-                $paystackPlan = $this->paystackService->createPlan($pricingPlan);
-                $pricingPlan->paystack_plan_code = $paystackPlan['plan_code'];
+                $paystackPlan = $this->paystackService->createPlan($Plan);
+                $Plan->paystack_plan_code = $paystackPlan['plan_code'];
 
                 Log::info('Paystack plan created', [
-                    'plan_name' => $pricingPlan->name,
-                    'paystack_plan_code' => $pricingPlan->paystack_plan_code,
+                    'plan_name' => $Plan->name,
+                    'paystack_plan_code' => $Plan->paystack_plan_code,
                 ]);
             } catch (\Exception $e) {
                 Log::error('Failed to create plan in Paystack', [
-                    'plan_name' => $pricingPlan->name,
+                    'plan_name' => $Plan->name,
                     'error' => $e->getMessage(),
                 ]);
 
@@ -39,25 +39,25 @@ class PricingPlanObserver
     }
 
     /**
-     * Handle the PricingPlan "updating" event.
+     * Handle the Plan "updating" event.
      * Update plan in Paystack before updating database.
      */
-    public function updating(PricingPlan $pricingPlan): void
+    public function updating(Plan $Plan): void
     {
         // Only update in Paystack if it has a plan code (paid plan)
-        if ($pricingPlan->paystack_plan_code) {
+        if ($Plan->paystack_plan_code) {
             try {
-                $this->paystackService->updatePlan($pricingPlan);
+                $this->paystackService->updatePlan($Plan);
 
                 Log::info('Paystack plan updated', [
-                    'plan_id' => $pricingPlan->id,
-                    'plan_name' => $pricingPlan->name,
-                    'paystack_plan_code' => $pricingPlan->paystack_plan_code,
+                    'plan_id' => $Plan->id,
+                    'plan_name' => $Plan->name,
+                    'paystack_plan_code' => $Plan->paystack_plan_code,
                 ]);
             } catch (\Exception $e) {
                 Log::error('Failed to update plan in Paystack', [
-                    'plan_id' => $pricingPlan->id,
-                    'plan_name' => $pricingPlan->name,
+                    'plan_id' => $Plan->id,
+                    'plan_name' => $Plan->name,
                     'error' => $e->getMessage(),
                 ]);
 
@@ -68,25 +68,25 @@ class PricingPlanObserver
     }
 
     /**
-     * Handle the PricingPlan "deleting" event.
+     * Handle the Plan "deleting" event.
      * Delete plan from Paystack before deleting from database.
      */
-    public function deleting(PricingPlan $pricingPlan): void
+    public function deleting(Plan $Plan): void
     {
         // Only attempt to delete from Paystack if it has a plan code
-        if ($pricingPlan->paystack_plan_code) {
+        if ($Plan->paystack_plan_code) {
             try {
-                $this->paystackService->deletePlan($pricingPlan->paystack_plan_code);
+                $this->paystackService->deletePlan($Plan->paystack_plan_code);
 
                 Log::info('Paystack plan deletion logged', [
-                    'plan_id' => $pricingPlan->id,
-                    'plan_name' => $pricingPlan->name,
-                    'paystack_plan_code' => $pricingPlan->paystack_plan_code,
+                    'plan_id' => $Plan->id,
+                    'plan_name' => $Plan->name,
+                    'paystack_plan_code' => $Plan->paystack_plan_code,
                 ]);
             } catch (\Exception $e) {
                 Log::error('Failed to delete plan from Paystack', [
-                    'plan_id' => $pricingPlan->id,
-                    'plan_name' => $pricingPlan->name,
+                    'plan_id' => $Plan->id,
+                    'plan_name' => $Plan->name,
                     'error' => $e->getMessage(),
                 ]);
 

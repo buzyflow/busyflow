@@ -1,7 +1,7 @@
 import Pages from './Pages'
 
-const PricingPlanResource = {
+const PlanResource = {
     Pages: Object.assign(Pages, Pages),
 }
 
-export default PricingPlanResource
+export default PlanResource
